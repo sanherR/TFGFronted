@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Apptech")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+c4ee678c3b5c7a3343f0794eab738044f1645587")]
 [assembly: System.Reflection.AssemblyProductAttribute("Apptech")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Apptech")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
