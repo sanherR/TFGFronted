@@ -1,56 +1,81 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Apptech.LoginPage"
-             BackgroundColor="#F5F5F5"> <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="25" VerticalOptions="Center">
-            
-            <Image Source="dotnet_bot.png"
-                   HeightRequest="150"
-                   Aspect="AspectFit" />
+             BackgroundColor="#F5F5F5">
 
-            <Border Stroke="Transparent"
-                    BackgroundColor="White"
-                    Padding="20"
-                    Margin="10">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="15" />
-                </Border.StrokeShape>
-                
-                <Border.Shadow>
-                    <Shadow Brush="Black" Offset="0,5" Radius="10" Opacity="0.1" />
-                </Border.Shadow>
+    <ScrollView>
+        <Grid ColumnDefinitions="0.1*, 0.8*, 0.1*" 
+              RowDefinitions="0.3*, 0.7*"
+              Padding="20"
+              VerticalOptions="Fill"
+              MinimumHeightRequest="650">
 
-                <VerticalStackLayout Spacing="20">
-                    <Label Text="INICIAR SESIÓN"
-                           HorizontalTextAlignment="Center"
-                           FontSize="24"
-                           TextColor="#333333"
-                           FontAttributes="Bold" />
+            <Image Grid.Row="0" Grid.Column="1"
+                   Source="dotnet_bot.png"
+                   Margin="0,0,0,20"
+                   HorizontalOptions="Center" />
 
-                    <Border StrokeThickness="1" Stroke="#E0E0E0" StrokeShape="RoundRectangle 8" Padding="10,0">
-                         <Entry Placeholder="Usuario" HeightRequest="45" />
-                    </Border>
+            <VerticalStackLayout Grid.Row="1" Grid.Column="1"
+                                 Spacing="25">
 
-                    <Border StrokeThickness="1" Stroke="#E0E0E0" StrokeShape="RoundRectangle 8" Padding="10,0">
-                         <Entry Placeholder="Contraseña" IsPassword="True" HeightRequest="45" />
-                    </Border>
+                <Border BackgroundColor="White"
+                        Padding="30"
+                        StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="25" />
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,10" Radius="20" Opacity="0.1" />
+                    </Border.Shadow>
 
-                    <Button Text="Iniciar Sesión"
-                            BackgroundColor="#003366"
-                            TextColor="White"
-                            HeightRequest="50"
-                            CornerRadius="8" />
+                    <Grid RowDefinitions="Auto, Auto, Auto, Auto" 
+                          RowSpacing="18">
 
-                    <Label Text="¿No tienes cuenta? Regístrate aquí"
-                           TextColor="Blue"
-                           HorizontalOptions="Center">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnRegisterTapped"/>
-                        </Label.GestureRecognizers>
-                    </Label>
-                </VerticalStackLayout>
-            </Border>
+                        <Label Grid.Row="0" 
+                               Text="BIENVENIDO"
+                               FontSize="26"
+                               FontAttributes="Bold"
+                               TextColor="#003366"
+                               HorizontalTextAlignment="Center" />
 
-        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Row="1" Spacing="8">
+                            <Label Text="Nombre de usuario" FontSize="14" TextColor="#555" Margin="5,0"/>
+                            <Border Stroke="#DCE0E5" StrokeShape="RoundRectangle 12" Padding="12,0">
+                                <Entry Placeholder="Nombre de usuario" HeightRequest="48" Keyboard="text" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Row="2" Spacing="8">
+                            <Label Text="Contraseña" FontSize="14" TextColor="#555" Margin="5,0"/>
+                            <Border Stroke="#DCE0E5" StrokeShape="RoundRectangle 12" Padding="12,0">
+                                <Entry Placeholder="******" IsPassword="True" HeightRequest="48" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Button Grid.Row="3"
+                                Text="INICIAR SESIÓN"
+                                BackgroundColor="#003366"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                HeightRequest="55"
+                                CornerRadius="15" />
+                    </Grid>
+                </Border>
+
+                <Label HorizontalOptions="Center" FontSize="14">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="¿No tienes cuenta? " TextColor="#666" />
+                            <Span Text="Regístrate" TextColor="#003366" FontAttributes="Bold">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnRegisterTapped"/>
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+            </VerticalStackLayout>
+        </Grid>
     </ScrollView>
-</ContentPage>
+</ContentPage>  

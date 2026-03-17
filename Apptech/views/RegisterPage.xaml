@@ -36,7 +36,7 @@
                 <Entry x:Name="txtConfirmPassword" Placeholder="Confirmar contraseña" IsPassword="True" />
             </Border>
 
-            <Button Text="CREAR CUENTA" Clicked="OnRegisterClicked"
+            <Button Text="CREAR CUENTA"
                     BackgroundColor="#003366"
                     TextColor="White"
                     FontAttributes="Bold"
