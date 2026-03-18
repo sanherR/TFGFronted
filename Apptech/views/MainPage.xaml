@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:Apptech.views"
+             x:Class="Apptech.views.MainPage"
+             Title="Menu Principal"
+             BackgroundColor="White">
+
+    <Grid RowDefinitions="*, Auto">
+        <CarouselView x:Name="miCarrusel" Loop="False">
+            <CarouselView.ItemsSource>
+                <x:Array Type="{x:Type VisualElement}">
+                    <views:ProductosPage />
+                    <views:ProductoCategoriaPage/>
+                    <views:ChatPage/>
+                    <views:PerfilPage/>
+                </x:Array>                                        
+            </CarouselView.ItemsSource>
+            
+            <CarouselView.ItemTemplate>
+                <DataTemplate>
+                    <ContentPresenter Content="{Binding .}" />
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+
+        <Grid Grid.Row="1"
+              BackgroundColor="#F8F8F8" 
+              VerticalOptions="End" 
+              Padding="10"
+              ColumnDefinitions="*, *, *, *">
+              
+
+            <ImageButton Source="icono_casa.png" Grid.Column="0" Clicked="IrAProductos" />
+            <ImageButton Source="icono_tres_rallas.png" Grid.Column="1" Clicked="IrACategorias" />
+            <ImageButton Source="icono_chat.png" Grid.Column="2" Clicked="IrAChat" />
+            <ImageButton Source="icono_perfil.png" Grid.Column="3" Clicked="IrAPerfil" />
+        </Grid>
+    </Grid>
+    
+</ContentPage>

@@ -46,11 +46,41 @@ build_metadata.AdditionalFiles.ManifestResourceName = Apptech.Resources.Styles.S
 build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Styles.xaml
 build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Styles.xaml
 
+[C:/TFGFronted/Apptech/views/ChatPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.ChatPage.xaml
+build_metadata.AdditionalFiles.TargetPath = views\ChatPage.xaml
+build_metadata.AdditionalFiles.RelativePath = views\ChatPage.xaml
+
 [C:/TFGFronted/Apptech/views/LoginPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.LoginPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\LoginPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\LoginPage.xaml
+
+[C:/TFGFronted/Apptech/views/MainPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.MainPage.xaml
+build_metadata.AdditionalFiles.TargetPath = views\MainPage.xaml
+build_metadata.AdditionalFiles.RelativePath = views\MainPage.xaml
+
+[C:/TFGFronted/Apptech/views/PerfilPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.PerfilPage.xaml
+build_metadata.AdditionalFiles.TargetPath = views\PerfilPage.xaml
+build_metadata.AdditionalFiles.RelativePath = views\PerfilPage.xaml
+
+[C:/TFGFronted/Apptech/views/ProductoCategoriaPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.ProductoCategoriaPage.xaml
+build_metadata.AdditionalFiles.TargetPath = views\ProductoCategoriaPage.xaml
+build_metadata.AdditionalFiles.RelativePath = views\ProductoCategoriaPage.xaml
+
+[C:/TFGFronted/Apptech/views/ProductosPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.ProductosPage.xaml
+build_metadata.AdditionalFiles.TargetPath = views\ProductosPage.xaml
+build_metadata.AdditionalFiles.RelativePath = views\ProductosPage.xaml
 
 [C:/TFGFronted/Apptech/views/RegisterPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml

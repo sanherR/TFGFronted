@@ -1,4 +1,4 @@
-﻿namespace Apptech;
+﻿namespace Apptech.views;
 
 public partial class LoginPage: ContentPage
 {
