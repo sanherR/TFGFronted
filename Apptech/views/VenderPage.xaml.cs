@@ -51,7 +51,7 @@
             }
 
            
-                await _apiService.CrearProducto(nombre, descripcion, precio, archivo);
+                await _apiService.CrearProducto(nombre, descripcion, precio.ToString(), archivo);
         }
         catch (FormatException)
         {
