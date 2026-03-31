@@ -14,6 +14,11 @@ public partial class MainPage: ContentPage
     {
         miCarrusel.ScrollTo(1, animate: true);
     }
+    private  async void  IrAVender(object sender, EventArgs e)
+
+    {
+        await Navigation.PushAsync(new VenderPage());
+    }
 
     private void IrAChat(object sender, EventArgs e)
     {
@@ -24,6 +29,33 @@ public partial class MainPage: ContentPage
     {
 
         miCarrusel.ScrollTo(3, animate: true);
+    }
+
+    private void OnPositionChanged(object sender, PositionChangedEventArgs e)
+    {
+      switch (e.CurrentPosition)
+        {
+            case 0:
+
+                Title = "Productos";
+                break;
+
+            case 1:
+               
+                Title = "Categorías";
+                break;
+
+            case 2:
+
+                Title = "Chat";
+                break;
+
+            case 3:
+
+                Title = "Perfil";
+
+                break;
+        }
     }
 
 	

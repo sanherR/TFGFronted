@@ -7,35 +7,120 @@
              BackgroundColor="White">
 
     <Grid RowDefinitions="*, Auto">
-        <CarouselView x:Name="miCarrusel" Loop="False">
+       <CarouselView x:Name="miCarrusel"
+              Loop="False"
+              IsSwipeEnabled="False"
+              PositionChanged="OnPositionChanged">
+
             <CarouselView.ItemsSource>
-                <x:Array Type="{x:Type VisualElement}">
-                    <views:ProductosPage />
-                    <views:ProductoCategoriaPage/>
-                    <views:ChatPage/>
-                    <views:PerfilPage/>
-                </x:Array>                                        
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Productos</x:String>
+                    <x:String>Categorias</x:String>
+                    <x:String>Chat</x:String>
+                    <x:String>Perfil</x:String>
+                </x:Array>
             </CarouselView.ItemsSource>
-            
+
             <CarouselView.ItemTemplate>
                 <DataTemplate>
-                    <ContentPresenter Content="{Binding .}" />
+                    <Grid>
+
+                        <views:ProductosPage IsVisible="True">
+                            <views:ProductosPage.Triggers>
+                                <DataTrigger TargetType="views:ProductosPage"
+                                            Binding="{Binding .}"
+                                            Value="Productos">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </views:ProductosPage.Triggers>
+                        </views:ProductosPage>
+
+                        <views:ProductoCategoriaPage IsVisible="False">
+                            <views:ProductoCategoriaPage.Triggers>
+                                <DataTrigger TargetType="views:ProductoCategoriaPage"
+                                            Binding="{Binding .}"
+                                            Value="Categorias">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </views:ProductoCategoriaPage.Triggers>
+                        </views:ProductoCategoriaPage>
+
+                        <views:ChatPage IsVisible="False">
+                            <views:ChatPage.Triggers>
+                                <DataTrigger TargetType="views:ChatPage"
+                                            Binding="{Binding .}"
+                                            Value="Chat">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </views:ChatPage.Triggers>
+                        </views:ChatPage>
+
+                        <views:PerfilPage IsVisible="False">
+                            <views:PerfilPage.Triggers>
+                                <DataTrigger TargetType="views:PerfilPage"
+                                            Binding="{Binding .}"
+                                            Value="Perfil">
+                                    <Setter Property="IsVisible" Value="True"/>
+                                </DataTrigger>
+                            </views:PerfilPage.Triggers>
+                        </views:PerfilPage>
+
+                    </Grid>
                 </DataTemplate>
             </CarouselView.ItemTemplate>
+
         </CarouselView>
 
-        <Grid Grid.Row="1"
-              BackgroundColor="#F8F8F8" 
+       <Grid Grid.Row="1"
+              BackgroundColor="Transparent" 
               VerticalOptions="End" 
-              Padding="10"
-              ColumnDefinitions="*, *, *, *">
-              
+              Padding="15, 0, 15, 10"> <Border BackgroundColor="White"       
+                    Padding="10"
+                    StrokeThickness="0"> <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="30" />
+                </Border.StrokeShape>
+                
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,10" Radius="20" Opacity="0.1" />
+                </Border.Shadow>
 
-            <ImageButton Source="icono_casa.png" Grid.Column="0" Clicked="IrAProductos" />
-            <ImageButton Source="icono_tres_rallas.png" Grid.Column="1" Clicked="IrACategorias" />
-            <ImageButton Source="icono_chat.png" Grid.Column="2" Clicked="IrAChat" />
-            <ImageButton Source="icono_perfil.png" Grid.Column="3" Clicked="IrAPerfil" />
+                <Grid ColumnDefinitions="*, *, *, *, *">
+                   <ImageButton Source="icono_casa.png" 
+                         Grid.Column="0" 
+                         HeightRequest="32" 
+                         VerticalOptions="Center"
+                         HorizontalOptions="Center"
+                         Clicked="IrAProductos" />
+            
+            <ImageButton Source="icono_busqueda_categoria.png" 
+                         Grid.Column="1" 
+                         HeightRequest="32" 
+                         VerticalOptions="Center"
+                         HorizontalOptions="Center"
+                         Clicked="IrACategorias" />
+            
+            <ImageButton Source="icono_vender.png" 
+                         Grid.Column="2" 
+                         HeightRequest="70" 
+                         Clicked="IrAVender"
+                         VerticalOptions="Center"
+                         HorizontalOptions="Center"/>
+            
+            <ImageButton Source="icono_chat.png" 
+                         Grid.Column="3" 
+                         HeightRequest="32" 
+                         VerticalOptions="Center"
+                         HorizontalOptions="Center"
+                         Clicked="IrAChat" />
+            
+            <ImageButton Source="icono_perfil.png" 
+                         Grid.Column="4" 
+                         HeightRequest="32" 
+                         VerticalOptions="Center"
+                         HorizontalOptions="Center"
+                         Clicked="IrAPerfil" />
+                </Grid>
+            </Border>
         </Grid>
-    </Grid>
-    
+    </Grid> 
 </ContentPage>

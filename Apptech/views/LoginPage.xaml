@@ -52,7 +52,7 @@
                             </Border>
                         </VerticalStackLayout>
 
-                        <Button Grid.Row="3"
+                        <Button Grid.Row="3" Clicked="OnRegisterTapped2"
                                 Text="INICIAR SESIÓN"
                                 BackgroundColor="#003366"
                                 TextColor="White"

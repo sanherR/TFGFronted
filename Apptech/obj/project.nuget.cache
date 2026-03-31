@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "i9eHJjoMFv0=",
+  "dgSpecHash": "2wTnctypDkY=",
   "success": true,
   "projectFilePath": "C:\\TFGFronted\\Apptech\\Apptech.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Playe\\.nuget\\packages\\communitytoolkit.mvvm\\8.1.0\\communitytoolkit.mvvm.8.1.0.nupkg.sha512",
     "C:\\Users\\Playe\\.nuget\\packages\\googlegson\\2.13.0.1\\googlegson.2.13.0.1.nupkg.sha512",
     "C:\\Users\\Playe\\.nuget\\packages\\microsoft.extensions.configuration\\9.0.9\\microsoft.extensions.configuration.9.0.9.nupkg.sha512",
     "C:\\Users\\Playe\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\9.0.9\\microsoft.extensions.configuration.abstractions.9.0.9.nupkg.sha512",

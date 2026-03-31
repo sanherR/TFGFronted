@@ -10,8 +10,14 @@ public partial class LoginPage: ContentPage
 	}
 
 	private async void OnRegisterTapped(object sender, EventArgs e)
-{
+	{
     
     await Navigation.PushAsync(new RegisterPage());
-}
+	}
+
+	private async void OnRegisterTapped2(object sender, EventArgs e)
+	{
+    
+    await Navigation.PushAsync(new MainPage());
+	}
 }

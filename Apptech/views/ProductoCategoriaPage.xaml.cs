@@ -1,5 +1,5 @@
 namespace Apptech.views;
-public partial class ProductoCategoriaPage: ContentPage
+public partial class ProductoCategoriaPage: ContentView
 {
 
 	public ProductoCategoriaPage()

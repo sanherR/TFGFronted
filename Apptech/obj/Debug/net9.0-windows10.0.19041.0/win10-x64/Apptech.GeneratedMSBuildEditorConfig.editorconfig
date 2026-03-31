@@ -87,3 +87,9 @@ build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.RegisterPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\RegisterPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\RegisterPage.xaml
+
+[C:/TFGFronted/Apptech/views/VenderPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.VenderPage.xaml
+build_metadata.AdditionalFiles.TargetPath = views\VenderPage.xaml
+build_metadata.AdditionalFiles.RelativePath = views\VenderPage.xaml

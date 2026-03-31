@@ -1,5 +1,5 @@
 namespace Apptech.views;
-public partial class PerfilPage: ContentPage
+public partial class PerfilPage: ContentView
 {
 
 	public PerfilPage()

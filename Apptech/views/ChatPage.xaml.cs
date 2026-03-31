@@ -1,6 +1,6 @@
 
 namespace Apptech.views;
-public partial class ChatPage: ContentPage
+public partial class ChatPage: ContentView
 {
 
 	public ChatPage()
