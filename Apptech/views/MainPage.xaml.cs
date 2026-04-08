@@ -1,20 +1,22 @@
 namespace Apptech.views;
-public partial class MainPage: ContentPage
+
+public partial class MainPage : ContentPage
 {
 
-	public MainPage()
-	{
+    public MainPage()
+    {
         InitializeComponent();
-	}
+    }
     private void IrAProductos(object sender, EventArgs e)
     {
-        miCarrusel.ScrollTo(0, animate: true);    }
+        miCarrusel.ScrollTo(0, animate: true);
+    }
 
     private void IrACategorias(object sender, EventArgs e)
     {
         miCarrusel.ScrollTo(1, animate: true);
     }
-    private  async void  IrAVender(object sender, EventArgs e)
+    private async void IrAVender(object sender, EventArgs e)
 
     {
         await Navigation.PushAsync(new VenderPage());
@@ -33,7 +35,7 @@ public partial class MainPage: ContentPage
 
     private void OnPositionChanged(object sender, PositionChangedEventArgs e)
     {
-      switch (e.CurrentPosition)
+        switch (e.CurrentPosition)
         {
             case 0:
 
@@ -41,7 +43,7 @@ public partial class MainPage: ContentPage
                 break;
 
             case 1:
-               
+
                 Title = "Categorías";
                 break;
 
@@ -58,6 +60,25 @@ public partial class MainPage: ContentPage
         }
     }
 
-	
-    
+    private void RecargarProductos()
+    {
+        var items = miCarrusel.ItemsSource;
+
+        miCarrusel.ItemsSource = null;
+        miCarrusel.ItemsSource = items;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+
+        if (miCarrusel.Position == 0)
+        {
+            RecargarProductos();
+        }
+    }
+
+
+
 }

@@ -13,6 +13,8 @@
     <Button Text="Seleccionar Imagen y Agregar" Clicked="BtnAgregarProducto_Clicked" />
     <!-- Botón para agregar producto -->
     <Button Text="Agregar Producto" Clicked="BtnAgregarProducto_Clicked" />
+    <Button Text="prueba" Clicked="prueba" />
+
 
 </StackLayout>
             

@@ -1,0 +1,3 @@
+C:\TFGFronted\Apptech\bin\Release\net9.0-android\publish\com.companyname.apptech-Signed.apk
+C:\TFGFronted\Apptech\bin\Release\net9.0-android\publish\com.companyname.apptech.apk
+C:\TFGFronted\Apptech\bin\Release\net9.0-android\publish\_Microsoft.Android.Resource.Designer.dll

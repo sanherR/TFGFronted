@@ -2,15 +2,42 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:Apptech.views"
+             xmlns:selectors="clr-namespace:Apptech.selectors"
              x:Class="Apptech.views.MainPage"
              Title="Menu Principal"
              BackgroundColor="White">
+    <ContentPage.Resources>
+        <selectors:MainSelector x:Key="TemplateSelector" >
+
+            <selectors:MainSelector.ProductosTemplate>
+                <DataTemplate>
+                    <views:ProductosPage/>
+                </DataTemplate>
+            </selectors:MainSelector.ProductosTemplate>
+            <selectors:MainSelector.ProductosCategoriaTemplate>
+                <DataTemplate>
+                    <views:ProductoCategoriaPage/>
+                </DataTemplate>
+            </selectors:MainSelector.ProductosCategoriaTemplate>
+            <selectors:MainSelector.ChatTemplate>
+                <DataTemplate>
+                    <views:ChatPage/>
+                </DataTemplate>
+            </selectors:MainSelector.ChatTemplate>
+            <selectors:MainSelector.PerfilTemplate>
+                <DataTemplate>
+                    <views:PerfilPage/>
+                </DataTemplate>
+            </selectors:MainSelector.PerfilTemplate>
+        </selectors:MainSelector>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="*, Auto">
        <CarouselView x:Name="miCarrusel"
               Loop="False"
               IsSwipeEnabled="False"
-              PositionChanged="OnPositionChanged">
+              PositionChanged="OnPositionChanged"
+              ItemTemplate="{StaticResource TemplateSelector}">
 
             <CarouselView.ItemsSource>
                 <x:Array Type="{x:Type x:String}">
@@ -20,54 +47,6 @@
                     <x:String>Perfil</x:String>
                 </x:Array>
             </CarouselView.ItemsSource>
-
-            <CarouselView.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-
-                        <views:ProductosPage IsVisible="True">
-                            <views:ProductosPage.Triggers>
-                                <DataTrigger TargetType="views:ProductosPage"
-                                            Binding="{Binding .}"
-                                            Value="Productos">
-                                    <Setter Property="IsVisible" Value="True"/>
-                                </DataTrigger>
-                            </views:ProductosPage.Triggers>
-                        </views:ProductosPage>
-
-                        <views:ProductoCategoriaPage IsVisible="False">
-                            <views:ProductoCategoriaPage.Triggers>
-                                <DataTrigger TargetType="views:ProductoCategoriaPage"
-                                            Binding="{Binding .}"
-                                            Value="Categorias">
-                                    <Setter Property="IsVisible" Value="True"/>
-                                </DataTrigger>
-                            </views:ProductoCategoriaPage.Triggers>
-                        </views:ProductoCategoriaPage>
-
-                        <views:ChatPage IsVisible="False">
-                            <views:ChatPage.Triggers>
-                                <DataTrigger TargetType="views:ChatPage"
-                                            Binding="{Binding .}"
-                                            Value="Chat">
-                                    <Setter Property="IsVisible" Value="True"/>
-                                </DataTrigger>
-                            </views:ChatPage.Triggers>
-                        </views:ChatPage>
-
-                        <views:PerfilPage IsVisible="False">
-                            <views:PerfilPage.Triggers>
-                                <DataTrigger TargetType="views:PerfilPage"
-                                            Binding="{Binding .}"
-                                            Value="Perfil">
-                                    <Setter Property="IsVisible" Value="True"/>
-                                </DataTrigger>
-                            </views:PerfilPage.Triggers>
-                        </views:PerfilPage>
-
-                    </Grid>
-                </DataTemplate>
-            </CarouselView.ItemTemplate>
 
         </CarouselView>
 

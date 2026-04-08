@@ -13861,7 +13861,7 @@
         }
       }
     },
-    "net9.0-ios26.0": {
+    "net9.0-ios26.2": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -14279,7 +14279,7 @@
         }
       }
     },
-    "net9.0-ios26.0/android-arm64": {
+    "net9.0-ios26.2/android-arm64": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -14697,7 +14697,7 @@
         }
       }
     },
-    "net9.0-ios26.0/android-x64": {
+    "net9.0-ios26.2/android-x64": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -15115,7 +15115,7 @@
         }
       }
     },
-    "net9.0-ios26.0/iossimulator-x64": {
+    "net9.0-ios26.2/iossimulator-x64": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -15533,7 +15533,7 @@
         }
       }
     },
-    "net9.0-ios26.0/maccatalyst-x64": {
+    "net9.0-ios26.2/maccatalyst-x64": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -15951,7 +15951,7 @@
         }
       }
     },
-    "net9.0-ios26.0/win10-x64": {
+    "net9.0-ios26.2/win10-x64": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -16369,7 +16369,7 @@
         }
       }
     },
-    "net9.0-maccatalyst26.0": {
+    "net9.0-maccatalyst26.2": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -16787,7 +16787,7 @@
         }
       }
     },
-    "net9.0-maccatalyst26.0/android-arm64": {
+    "net9.0-maccatalyst26.2/android-arm64": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -17205,7 +17205,7 @@
         }
       }
     },
-    "net9.0-maccatalyst26.0/android-x64": {
+    "net9.0-maccatalyst26.2/android-x64": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -17623,7 +17623,7 @@
         }
       }
     },
-    "net9.0-maccatalyst26.0/iossimulator-x64": {
+    "net9.0-maccatalyst26.2/iossimulator-x64": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -18041,7 +18041,7 @@
         }
       }
     },
-    "net9.0-maccatalyst26.0/maccatalyst-x64": {
+    "net9.0-maccatalyst26.2/maccatalyst-x64": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -18459,7 +18459,7 @@
         }
       }
     },
-    "net9.0-maccatalyst26.0/win10-x64": {
+    "net9.0-maccatalyst26.2/win10-x64": {
       "CommunityToolkit.Mvvm/8.1.0": {
         "type": "package",
         "compile": {
@@ -26538,13 +26538,13 @@
       "Microsoft.Maui.Controls >= 9.0.120",
       "Microsoft.NET.ILLink.Tasks >= 9.0.3"
     ],
-    "net9.0-ios26.0": [
+    "net9.0-ios26.2": [
       "CommunityToolkit.Mvvm >= 8.1.0",
       "Microsoft.Extensions.Logging.Debug >= 9.0.9",
       "Microsoft.Maui.Controls >= 9.0.120",
       "Microsoft.NET.ILLink.Tasks >= 9.0.3"
     ],
-    "net9.0-maccatalyst26.0": [
+    "net9.0-maccatalyst26.2": [
       "CommunityToolkit.Mvvm >= 8.1.0",
       "Microsoft.Extensions.Logging.Debug >= 9.0.9",
       "Microsoft.Maui.Controls >= 9.0.120",
@@ -26587,11 +26587,11 @@
           "targetAlias": "net9.0-android",
           "projectReferences": {}
         },
-        "net9.0-ios26.0": {
+        "net9.0-ios26.2": {
           "targetAlias": "net9.0-ios",
           "projectReferences": {}
         },
-        "net9.0-maccatalyst26.0": {
+        "net9.0-maccatalyst26.2": {
           "targetAlias": "net9.0-maccatalyst",
           "projectReferences": {}
         },
@@ -26649,7 +26649,7 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[9.0.13, 9.0.13]"
+            "version": "[9.0.14, 9.0.14]"
           }
         ],
         "frameworkReferences": {
@@ -26662,7 +26662,7 @@
         },
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
       },
-      "net9.0-ios26.0": {
+      "net9.0-ios26.2": {
         "targetAlias": "net9.0-ios",
         "dependencies": {
           "CommunityToolkit.Mvvm": {
@@ -26698,7 +26698,7 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[9.0.13, 9.0.13]"
+            "version": "[9.0.14, 9.0.14]"
           }
         ],
         "frameworkReferences": {
@@ -26711,7 +26711,7 @@
         },
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
       },
-      "net9.0-maccatalyst26.0": {
+      "net9.0-maccatalyst26.2": {
         "targetAlias": "net9.0-maccatalyst",
         "dependencies": {
           "CommunityToolkit.Mvvm": {
@@ -26748,7 +26748,7 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[9.0.13, 9.0.13]"
+            "version": "[9.0.14, 9.0.14]"
           }
         ],
         "frameworkReferences": {
