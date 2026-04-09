@@ -1,56 +1,87 @@
 namespace Apptech.views;
 using System.Collections.ObjectModel;
 using Apptech.Services;
+using Apptech.Models;
+using Java.Security;
+using Android.Content;
+
 public partial class ProductosPage: ContentView
 {
     private readonly ApiService _apiService = new ApiService();
 
-	public class ItemPop
-    {
-        public string Nombre { get; set; }
-
-        public string descripcion { get; set; }
-
-        public int precio { get; set; }
-        public string ImagenUrl { get; set; }
-    }   
-    public ObservableCollection<ItemPop> MisProductos { get; set; }
+	
 
 	public ProductosPage()
 	{
-        InitializeComponent();
+        InitializeComponent();  
+        BindingContext = this; 
+        Loaded += async (s, e) => await CargarProductosAsync();
 
-        MisProductos = new ObservableCollection<ItemPop>();
-        BindingContext = this;
-         _ = CargarProductos(); 
-
+        
 
 
     }
-    
-    public async Task CargarProductos()
+     public ObservableCollection<ItemPop> Recomendados { get; set; } = new();
+    public ObservableCollection<ItemPop> MasPopulares { get; set; } = new();
+    public ObservableCollection<ItemPop> Novedades { get; set; } = new();
+
+   
+   public async Task CargarProductosAsync()
     {
-        try
+
+
+        if (Recomendados.Count == 0)
         {
-            var productos = await _apiService.ObtenerProductos();
+            try{
+                    var productos = await _apiService.ObtenerProductos();
+                    Recomendados.Clear();
+                    MasPopulares.Clear();
+                    Novedades.Clear();
 
-            MisProductos.Clear();
-
-            foreach (var producto in productos)
+            
+            foreach (var p in productos)
+            {
+                var item = new ItemPop
                 {
-                    MisProductos.Add(new ItemPop
-                    {
-                        Nombre = producto.Nombre,
-                        descripcion = producto.Descripcion,
-                        precio = producto.Precio,
-                        ImagenUrl = producto.ImagenUrl
-                    });
+                    Nombre = p.Nombre,
+                    Descripcion = p.Descripcion,
+                    precio = (int)p.Precio,
+                    ImagenUrl = "http://192.168.1.137:5062" + p.ImagenUrl
+                };
+
+                switch (p.Grupo)
+                {
+                    case "Recomendados": Recomendados.Add(item); break;
+                    case "Más Populares": MasPopulares.Add(item); break;
+                    case "Novedades": Novedades.Add(item); break;
                 }
             }
+
+                Lista1.ItemsSource = Recomendados;
+                Lista2.ItemsSource = MasPopulares;
+                Lista3.ItemsSource = Novedades;
+            }
+
             catch (Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Error", $"No se pudieron cargar los productos: {ex.Message}", "OK");
             }
+        
+    }
         }
+        
+    
+    
+    protected override async void OnParentSet()
+    {
+        base.OnParentSet();
+        await CargarProductosAsync(); 
+    }
+    
+    
+   
+    
+  
 }
+
 

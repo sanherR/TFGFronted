@@ -31,8 +31,7 @@ public class ApiService
         var fileContent = new StreamContent(archivoStream);
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
-        // El nombre que pasas aquí solo sirve para que IFormFile tenga extensión, 
-        // el backend generará un nombre único
+       
         content.Add(fileContent, "imagen", nombreArchivoOriginal);
     }
 
