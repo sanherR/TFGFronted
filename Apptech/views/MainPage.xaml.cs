@@ -1,4 +1,7 @@
 namespace Apptech.views;
+using Apptech.Models;
+using Apptech.Services;
+using System.Collections.ObjectModel;
 
 public partial class MainPage : ContentPage
 {
@@ -7,6 +10,8 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
     }
+   
+
     private void IrAProductos(object sender, EventArgs e)
     {
         miCarrusel.ScrollTo(0, animate: true);
@@ -68,17 +73,7 @@ public partial class MainPage : ContentPage
         miCarrusel.ItemsSource = items;
     }
 
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-
-
-        if (miCarrusel.Position == 0)
-        {
-            RecargarProductos();
-        }
-    }
-
+    
 
 
 }
