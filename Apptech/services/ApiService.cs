@@ -52,8 +52,14 @@ public class ApiService
         {
             throw new Exception("Error al obtener productos");
         }
-
+        
         var json = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<List<Producto>>(json);
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        return JsonSerializer.Deserialize<List<Producto>>(json, options);
     }
 }
