@@ -2,8 +2,6 @@ namespace Apptech.views;
 using System.Collections.ObjectModel;
 using Apptech.Services;
 using Apptech.Models;
-using Java.Security;
-using Android.Content;
 
 public partial class ProductosPage: ContentView
 {

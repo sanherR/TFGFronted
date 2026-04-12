@@ -29,7 +29,6 @@
 
             <Border Stroke="#003366" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,0">
                 <Entry x:Name="txtPassword" Placeholder="Contraseña" IsPassword="True" />
-
             </Border>
 
             <Border Stroke="#003366" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,0">
@@ -37,6 +36,7 @@
             </Border>
 
             <Button Text="CREAR CUENTA"
+                    Clicked="OnRegisterClicked"
                     BackgroundColor="#003366"
                     TextColor="White"
                     FontAttributes="Bold"
