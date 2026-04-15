@@ -1,4 +1,4 @@
-namespace Apptech.Services
+namespace Apptech.Models
 {
     public class Producto
     {
@@ -7,6 +7,8 @@ namespace Apptech.Services
         public string Descripcion { get; set; }
         public int Precio { get; set; } 
         public string ImagenUrl { get; set; }
+
+        public int CategoriaId { get; set; }
 
         public string? Grupo { get; set; } 
 

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using Apptech.Services;
 using Apptech.Models;
 
+
 public partial class ProductosPage: ContentView
 {
     private readonly ApiService _apiService = new ApiService();
@@ -12,8 +13,16 @@ public partial class ProductosPage: ContentView
 	public ProductosPage()
 	{
         InitializeComponent();  
-        BindingContext = this; 
-        Loaded += async (s, e) => await CargarProductosAsync();
+        this.BindingContext = this;
+
+        Loaded += async (s, e) =>
+        {
+            await CargarProductosAsync();
+        };
+        MessagingCenter.Subscribe<VenderPage>(this, "REFRESH_PRODUCTOS", async (s) =>
+    {
+        await CargarProductosAsync();
+    });
 
         
 
@@ -28,8 +37,7 @@ public partial class ProductosPage: ContentView
     {
 
 
-        if (Recomendados.Count == 0)
-        {
+
             try{
                     var productos = await _apiService.ObtenerProductos();
                     Recomendados.Clear();
@@ -39,6 +47,8 @@ public partial class ProductosPage: ContentView
             
             foreach (var p in productos)
             {
+                    System.Diagnostics.Debug.WriteLine($"GRUPO: '{p.Grupo}' LEN={p.Grupo?.Length}");
+
                 var item = new ItemPop
                 {
                     Nombre = p.Nombre,
@@ -46,18 +56,32 @@ public partial class ProductosPage: ContentView
                     precio = (int)p.Precio,
                     ImagenUrl = "http://192.168.1.137:5062" + p.ImagenUrl
                 };
+                System.Diagnostics.Debug.WriteLine(
+                System.Text.Json.JsonSerializer.Serialize(p)
+);
+                System.Diagnostics.Debug.WriteLine("UI TEST → entrando a foreach");
 
                 switch (p.Grupo)
                 {
-                    case "Recomendados": Recomendados.Add(item); break;
-                    case "Más Populares": MasPopulares.Add(item); break;
-                    case "Novedades": Novedades.Add(item); break;
+                    case "Recomendados": 
+                    
+                        System.Diagnostics.Debug.WriteLine("ADD ITEM A RECOMENDADOS");
+                        Recomendados.Add(item); break;
+                    case "Más Populares": 
+                        System.Diagnostics.Debug.WriteLine("ADD ITEM A MÁS POPULARES");
+                        MasPopulares.Add(item); break;
+                    case "Novedades": 
+                        System.Diagnostics.Debug.WriteLine("ADD ITEM A NOVEDADES");
+                        Novedades.Add(item); break;
                 }
             }
+            System.Diagnostics.Debug.WriteLine($"Recomendados: {Recomendados.Count}");
+            System.Diagnostics.Debug.WriteLine($"MasPopulares: {MasPopulares.Count}");
+            System.Diagnostics.Debug.WriteLine($"Novedades: {Novedades.Count}");
+            System.Diagnostics.Debug.WriteLine($"TOTAL API: {productos.Count}");
+          
 
-                Lista1.ItemsSource = Recomendados;
-                Lista2.ItemsSource = MasPopulares;
-                Lista3.ItemsSource = Novedades;
+              
             }
 
             catch (Exception ex)
@@ -66,20 +90,16 @@ public partial class ProductosPage: ContentView
             }
         
     }
-        }
+    
+}
+       
+       
+   
         
     
     
-    protected override async void OnParentSet()
-    {
-        base.OnParentSet();
-        await CargarProductosAsync(); 
-    }
-    
+  
     
    
     
   
-}
-
-

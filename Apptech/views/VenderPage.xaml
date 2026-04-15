@@ -9,11 +9,13 @@
     <Entry x:Name="NombreEntry" Placeholder="Nombre del producto" />
     <Entry x:Name="PrecioEntry" Placeholder="Precio del producto" Keyboard="Numeric" />
     <Entry x:Name="DescripcionEntry" Placeholder="Descripción del producto" />
+    <Picker x:Name="CategoriaPicker" 
+            Title="Selecciona una categoría"
+            ItemDisplayBinding="{Binding Nombre}"/>
 
     <Button Text="Seleccionar Imagen y Agregar" Clicked="BtnAgregarProducto_Clicked" />
     <!-- Botón para agregar producto -->
     <Button Text="Agregar Producto" Clicked="BtnAgregarProducto_Clicked" />
-    <Button Text="prueba" Clicked="prueba" />
 
 
 </StackLayout>

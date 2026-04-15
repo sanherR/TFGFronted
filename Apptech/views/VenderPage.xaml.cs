@@ -1,5 +1,6 @@
-        namespace  Apptech.views;
+        namespace Apptech.views;
         using Microsoft.Maui.Storage; 
+        using Apptech.Models;
         using Apptech.Services;
 
         public partial class VenderPage : ContentPage
@@ -22,6 +23,8 @@
                 String descripcion = DescripcionEntry.Text;
                 String imagenURL = string.Empty;
                 int precio = int.Parse(PrecioEntry.Text);
+                var usuarioId = Preferences.Get("usuario_id", 0);
+                var categoriaSeleccionada = (Categoria)CategoriaPicker.SelectedItem;
 
                 if(precio < 0)
                 {
@@ -49,9 +52,20 @@
                 }
                     using var stream = await archivo.OpenReadAsync();
 
+                if (usuarioId ==0)
+                {
+                await DisplayAlert("Error", "Debes tener una cuenta para poder vender productos", "OK");
+                await Navigation.PushAsync(new LoginPage());
+                return;
+                }
 
+                if (categoriaSeleccionada == null)
+                {
+                await DisplayAlert("Error", "Debes seleccionar una categoría para el producto", "OK");
+                return;
+                }
             
-                    await _apiService.CrearProducto(nombre, descripcion, precio, stream, archivo.FileName);
+                    await _apiService.CrearProducto(nombre, descripcion, precio, stream, archivo.FileName, usuarioId, categoriaSeleccionada.Id);
 
                     await DisplayAlert("Éxito", "Producto creado correctamente", "OK");
 
@@ -69,18 +83,20 @@
                 return;
             }
         }
-        private async void prueba(object sender, EventArgs e)
-            {
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
             try
             {
-                var productos = await _apiService.ObtenerProductos();
-                    await DisplayAlert("Conexión OK", $"Productos obtenidos: {productos.Count}", "OK"); 
+                var categorias = await _apiService.ObtenerCategorias();
+                CategoriaPicker.ItemsSource = categorias;
             }
-            catch (Exception ex){
-        
-                await DisplayAlert("Error", $"No se pudo conectar con el servidor: {ex.Message}", "OK");
-                return;
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"No se pudieron cargar las categorías: {ex.Message}", "OK");
             }
         }
+       
         
     }

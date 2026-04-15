@@ -12,7 +12,7 @@
               Padding="0, 20, 0, 100"> <Grid Grid.Row="0" RowDefinitions="Auto, Auto" RowSpacing="10">
                 <Label Text="Recomendados" FontSize="20" FontAttributes="Bold" Margin="20,0" TextColor="Black" />
 
-                <CollectionView  x:Name="Lista1" ItemsSource="{Binding Recomendados}" Grid.Row="1" InputTransparent="False" HeightRequest="180" HorizontalScrollBarVisibility="Never">
+                <CollectionView  ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=Recomendados}" Grid.Row="1" InputTransparent="False" HeightRequest="180" HorizontalScrollBarVisibility="Never">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
                     </CollectionView.ItemsLayout>
@@ -31,7 +31,7 @@
 
             <Grid Grid.Row="1" RowDefinitions="Auto, Auto" RowSpacing="10">
                 <Label Text="Más Populares" FontSize="20" FontAttributes="Bold" Margin="20,0" TextColor="Black" />
-                <CollectionView x:Name="Lista2" ItemsSource="{Binding MasPopulares}" Grid.Row="1" InputTransparent="False" HeightRequest="180" HorizontalScrollBarVisibility="Never">
+                <CollectionView  ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=MasPopulares}"  Grid.Row="1" InputTransparent="False" HeightRequest="180" HorizontalScrollBarVisibility="Never">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
                     </CollectionView.ItemsLayout>
@@ -50,7 +50,7 @@
 
             <Grid Grid.Row="2" RowDefinitions="Auto, Auto" RowSpacing="10">
                 <Label Text="Novedades" FontSize="20" FontAttributes="Bold" Margin="20,0" TextColor="Black" />
-                <CollectionView x:Name="Lista3" ItemsSource="{Binding Novedades}" Grid.Row="1" InputTransparent="False" HeightRequest="180" HorizontalScrollBarVisibility="Never">
+                <CollectionView ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=Novedades}" Grid.Row="1" InputTransparent="False" HeightRequest="180" HorizontalScrollBarVisibility="Never">
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
                     </CollectionView.ItemsLayout>
