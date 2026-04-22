@@ -1,0 +1,23 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Apptech.views.VenderPage"
+             Title="Vender Producto"
+             BackgroundColor="#F5F5F5">
+    <StackLayout Padding="20" Spacing="15">
+
+    <!-- Entrada del nombre -->
+    <Entry x:Name="NombreEntry" Placeholder="Nombre del producto" />
+    <Entry x:Name="PrecioEntry" Placeholder="Precio del producto" Keyboard="Numeric" />
+    <Entry x:Name="DescripcionEntry" Placeholder="Descripción del producto" />
+    <Picker x:Name="CategoriaPicker" 
+            Title="Selecciona una categoría"
+            ItemDisplayBinding="{Binding Nombre}"/>
+
+    <Button Text="Seleccionar Imagen y Agregar" Clicked="BtnAgregarProducto_Clicked" />
+    <!-- Botón para agregar producto -->
+    <Button Text="Agregar Producto" Clicked="BtnAgregarProducto_Clicked" />
+
+
+</StackLayout>
+            
+</ContentPage>  

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Apptech.views.ProductosPage"
+             BackgroundColor="White">
+
+    <ScrollView VerticalScrollBarVisibility="Never">
+                    
+
+        <Grid RowDefinitions="Auto, Auto, Auto" 
+              RowSpacing="30"
+              Padding="0, 20, 0, 100"> <Grid Grid.Row="0" RowDefinitions="Auto, Auto" RowSpacing="10">
+                <Label Text="Recomendados" FontSize="20" FontAttributes="Bold" Margin="20,0" TextColor="Black" />
+
+                <CollectionView  ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=Recomendados}" Grid.Row="1" InputTransparent="False" HeightRequest="180" HorizontalScrollBarVisibility="Never">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="20,0,0,0" WidthRequest="140" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 15" StrokeThickness="0">
+                                <Grid RowDefinitions="*, Auto">
+                                    <Image Source="{Binding ImagenUrl}" Aspect="AspectFill" Grid.Row="0" HeightRequest="130"/>
+                                    <Label Text="{Binding Nombre}" Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Center" Margin="5" TextColor="#333"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+
+            <Grid Grid.Row="1" RowDefinitions="Auto, Auto" RowSpacing="10">
+                <Label Text="Más Populares" FontSize="20" FontAttributes="Bold" Margin="20,0" TextColor="Black" />
+                <CollectionView  ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=MasPopulares}"  Grid.Row="1" InputTransparent="False" HeightRequest="180" HorizontalScrollBarVisibility="Never">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="20,0,0,0" WidthRequest="140" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 15" StrokeThickness="0">
+                                <Grid RowDefinitions="*, Auto">
+                                    <Image Source="{Binding ImagenUrl}" Aspect="AspectFill" Grid.Row="0" HeightRequest="130"/>
+                                    <Label Text="{Binding Nombre}" Grid.Row="1" HorizontalOptions="Center" Margin="5" TextColor="#333"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+
+            <Grid Grid.Row="2" RowDefinitions="Auto, Auto" RowSpacing="10">
+                <Label Text="Novedades" FontSize="20" FontAttributes="Bold" Margin="20,0" TextColor="Black" />
+                <CollectionView ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=Novedades}" Grid.Row="1" InputTransparent="False" HeightRequest="180" HorizontalScrollBarVisibility="Never">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="20,0,0,0" WidthRequest="140" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 15" StrokeThickness="0">
+                                <Grid RowDefinitions="*, Auto">
+                                    <Image Source="{Binding ImagenUrl}" Aspect="AspectFill" Grid.Row="0" HeightRequest="130"/>
+                                    <Label Text="{Binding Nombre}" Grid.Row="1" HorizontalOptions="Center" Margin="5" TextColor="#333"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </Grid>
+    </ScrollView>
+</ContentView>
