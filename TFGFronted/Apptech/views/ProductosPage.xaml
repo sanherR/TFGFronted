@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Apptech.views.ProductosPage"
+             BackgroundColor="White">
+
+    <ScrollView VerticalScrollBarVisibility="Never">
+        <Grid RowDefinitions="Auto, Auto, Auto" 
+              RowSpacing="30"
+              Padding="0, 20, 0, 100">
+
+            <Grid Grid.Row="0" RowDefinitions="Auto, Auto" RowSpacing="10">
+                <Label Text="Recomendados" FontSize="20" FontAttributes="Bold" Margin="20,0" TextColor="Black" />
+
+                <CollectionView ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=Recomendados}" 
+                                Grid.Row="1" HeightRequest="240" HorizontalScrollBarVisibility="Never">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="20,0,0,0" WidthRequest="150" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 15" StrokeThickness="0">
+                                <Grid RowDefinitions="120, Auto, Auto">
+                                    <Image Source="{Binding ImagenUrl}" Aspect="AspectFill" Grid.Row="0" HeightRequest="120"/>
+                                    <Label Text="{Binding Nombre}" Grid.Row="1" HorizontalOptions="Center" Margin="5,2" TextColor="#333" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
+                                    <Button Text="Comprar" 
+                                            Grid.Row="2" 
+                                            Margin="10,5" 
+                                            HeightRequest="35" 
+                                            FontSize="12"
+                                            Padding="0"
+                                            BackgroundColor="#2196F3"
+                                            CommandParameter="{Binding .}"
+                                            Clicked="OnComprarClicked" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+
+            <Grid Grid.Row="1" RowDefinitions="Auto, Auto" RowSpacing="10">
+                <Label Text="Más Populares" FontSize="20" FontAttributes="Bold" Margin="20,0" TextColor="Black" />
+                <CollectionView ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=MasPopulares}" 
+                                Grid.Row="1" HeightRequest="240" HorizontalScrollBarVisibility="Never">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="20,0,0,0" WidthRequest="150" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 15" StrokeThickness="0">
+                                <Grid RowDefinitions="120, Auto, Auto">
+                                    <Image Source="{Binding ImagenUrl}" Aspect="AspectFill" Grid.Row="0" HeightRequest="120"/>
+                                    <Label Text="{Binding Nombre}" Grid.Row="1" HorizontalOptions="Center" Margin="5,2" TextColor="#333" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
+                                    <Button Text="Comprar" 
+                                            Grid.Row="2" 
+                                            Margin="10,5" 
+                                            HeightRequest="35" 
+                                            FontSize="12"
+                                            Padding="0"
+                                            BackgroundColor="#2196F3"
+                                            CommandParameter="{Binding .}"
+                                            Clicked="OnComprarClicked" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+
+            <Grid Grid.Row="2" RowDefinitions="Auto, Auto" RowSpacing="10">
+                <Label Text="Novedades" FontSize="20" FontAttributes="Bold" Margin="20,0" TextColor="Black" />
+                <CollectionView ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=Novedades}" 
+                                Grid.Row="1" HeightRequest="240" HorizontalScrollBarVisibility="Never">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="20,0,0,0" WidthRequest="150" BackgroundColor="#F5F5F5" StrokeShape="RoundRectangle 15" StrokeThickness="0">
+                                <Grid RowDefinitions="120, Auto, Auto">
+                                    <Image Source="{Binding ImagenUrl}" Aspect="AspectFill" Grid.Row="0" HeightRequest="120"/>
+                                    <Label Text="{Binding Nombre}" Grid.Row="1" HorizontalOptions="Center" Margin="5,2" TextColor="#333" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
+                                    <Button Text="Comprar" 
+                                            Grid.Row="2" 
+                                            Margin="10,5" 
+                                            HeightRequest="35" 
+                                            FontSize="12"
+                                            Padding="0"
+                                            BackgroundColor="#2196F3"
+                                            CommandParameter="{Binding .}"
+                                            Clicked="OnComprarClicked" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </Grid>
+    </ScrollView>
+</ContentView>
