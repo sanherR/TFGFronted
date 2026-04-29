@@ -39,7 +39,7 @@ public class ApiService
         content.Add(new StringContent(usuarioId.ToString()), "usuarioId");
         content.Add(new StringContent(categoriaId.ToString()), "categoriaId");
 
-        // 📸 IMAGEN (OBLIGATORIA según backend)
+        //  IMAGEN (OBLIGATORIA según backend)
         if (archivoStream != null)
         {
             var fileContent = new StreamContent(archivoStream);
@@ -91,6 +91,40 @@ public class ApiService
 
         return JsonSerializer.Deserialize<List<Producto>>(json, options);
     }
+    public async Task<List<Producto>> ObtenerProductosUsuario(string token)
+{
+    try
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "api/productos/mis-productos");
+
+        request.Headers.Authorization =
+            new AuthenticationHeaderValue("Bearer", token.Trim());
+
+        var response = await _httpClient.SendAsync(request);
+
+        var result = await response.Content.ReadAsStringAsync();
+
+        Console.WriteLine("STATUS: " + response.StatusCode);
+        Console.WriteLine("RESPUESTA: " + result);
+
+        if (!response.IsSuccessStatusCode)
+            return new List<Producto>();
+
+        return JsonSerializer.Deserialize<List<Producto>>(
+            result,
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            }) ?? new List<Producto>();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("ERROR ObtenerProductosUsuario:");
+        Console.WriteLine(ex);
+        return new List<Producto>();
+    }
+}
+    
   public async Task<LoginResponse?> Login(string email, string contrasena)
     {
         try
@@ -177,5 +211,76 @@ public class ApiService
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
+    }
+
+    public async Task<string> SubirImagenPerfil(Stream archivoStream, string nombreArchivoOriginal, string token)
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/usuarios/upload-profile-image");
+
+            request.Headers.Authorization =
+                new AuthenticationHeaderValue("Bearer", token.Trim());
+
+            var content = new MultipartFormDataContent();
+
+            if (archivoStream != null)
+            {
+                var fileContent = new StreamContent(archivoStream);
+                fileContent.Headers.ContentType =
+                    new MediaTypeHeaderValue("image/jpeg");
+
+                content.Add(fileContent, "imagen", nombreArchivoOriginal);
+            }
+            else
+            {
+                Console.WriteLine(" ERROR: imagen null");
+                return null;
+            }
+
+            request.Content = content;
+
+            var response = await _httpClient.SendAsync(request);
+
+            var result = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine("STATUS: " + response.StatusCode);
+            Console.WriteLine("RESPUESTA: " + result);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            // Se asume que el backend devuelve la URL de la imagen como texto plano
+            return result.Trim('"'); // Eliminar comillas si las hay
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("ERROR:");
+            Console.WriteLine(ex);
+            return null;
+        }
+    }
+    public async Task<Usuario> ObtenerPerfil(string token)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "api/usuarios/perfil");
+
+        request.Headers.Authorization =
+            new AuthenticationHeaderValue("Bearer", token.Trim());
+
+        var response = await _httpClient.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var json = await response.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<Usuario>(
+            json,
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
     }
 }

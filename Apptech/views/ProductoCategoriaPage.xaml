@@ -2,8 +2,125 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Apptech.views.ProductoCategoriaPage"
+             x:Name="root"
              BackgroundColor="White">
+
+    <Grid RowDefinitions="Auto, Auto, Auto, *" RowSpacing="20" Padding="0, 10, 0, 20">
+
+        <Border Grid.Row="0"
+            Margin="10,0"
+            BackgroundColor="#F5F5F5"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 15">
+
+            <SearchBar Placeholder="Buscar productos..."
+                    TextChanged="Buscador"
+                    BackgroundColor="Transparent"
+                    PlaceholderColor="#999999"
+                    TextColor="#333333"
+                    FontSize="15" >
+            </SearchBar>
+        </Border>
+        <CollectionView Grid.Row="1" 
+                        ItemsSource="{Binding Source={x:Reference root}, Path=Sugerencias}"
+                        HeightRequest="150"
+                        BackgroundColor="White"
+                        IsVisible="{Binding Source={x:Reference root}, Path=MostrarSugerencias}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="10,4"
+                            Padding="14"
+                            BackgroundColor="#F5F5F5"
+                            StrokeShape="RoundRectangle 12"
+                            HorizontalOptions="Fill"
+                            StrokeThickness="0">
+
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=ProductoSeleccionadoCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+
+                        <Label Text="{Binding Nombre}"
+                               TextColor="#333"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+          
+        <CollectionView Grid.Row="2" 
+                        ItemsSource="{Binding Source={x:Reference root}, Path=ListaCategorias}"
+                        HeightRequest="60"
+                        ItemsLayout="HorizontalList">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="10,0,0,0" 
+                            WidthRequest="140" 
+                            BackgroundColor="#F5F5F5" 
+                            StrokeShape="RoundRectangle 15" 
+                            StrokeThickness="0">
+                        
+                        <Border.GestureRecognizers>
+                           <TapGestureRecognizer 
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentView}}, Path=CategoriaSeleccionadaCommand}" 
+                                CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        
+                        <Label Text="{Binding Nombre}" 
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center" 
+                               TextColor="#333"/>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <CollectionView Grid.Row="3"
+                ItemsSource="{Binding Source={x:Reference root}, Path=ProductosCategoria}"> 
+
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout 
+                        Orientation="Vertical" 
+                        Span="2"
+                        HorizontalItemSpacing="1"
+                        VerticalItemSpacing="2"/>
+                 </CollectionView.ItemsLayout>           
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="2" 
+                            BackgroundColor="#F5F5F5" 
+                            StrokeShape="RoundRectangle 15" 
+                            StrokeThickness="0">
+            
+                        <VerticalStackLayout Padding="10" Spacing="2">
+                            
+                            <Image Source="{Binding ImagenUrl}" 
+                                Aspect="AspectFill" 
+                                HeightRequest="120" 
+                                HorizontalOptions="Fill" />
+                            
+                          <VerticalStackLayout Spacing="2">
+
+                            <Label Text="{Binding Nombre}" 
+                                FontSize="16" 
+                                FontAttributes="Bold" 
+                                TextColor="#333"
+                                MaxLines="1"
+                                LineBreakMode="TailTruncation" />
+
+                            <Label Text="{Binding Precio, StringFormat='{0:F2} €'}" 
+                                FontSize="14" 
+                                FontAttributes="Bold"
+                                TextColor="#2ECC71" />
+                        </VerticalStackLayout>
+                            
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
 </ContentView>
-
-
-

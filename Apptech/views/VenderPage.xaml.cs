@@ -97,6 +97,15 @@
                 await DisplayAlert("Error", $"No se pudieron cargar las categorías: {ex.Message}", "OK");
             }
         }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            if (Handler != null)
+            {
+                MessagingCenter.Unsubscribe<VenderPage>(this, "REFRESH_PRODUCTOS");   ;
+            }
+        }
        
         
     }

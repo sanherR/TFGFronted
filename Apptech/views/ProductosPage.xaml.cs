@@ -28,7 +28,7 @@ public partial class ProductosPage: ContentView
 
 
     }
-     public ObservableCollection<ItemPop> Recomendados { get; set; } = new();
+    public ObservableCollection<ItemPop> Recomendados { get; set; } = new();
     public ObservableCollection<ItemPop> MasPopulares { get; set; } = new();
     public ObservableCollection<ItemPop> Novedades { get; set; } = new();
 

@@ -17,7 +17,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Apptech")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+da99398dfb1dbd62412cb81b7967ceff5d0e14a7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+b906996e84b8d8824b0528baa0f0c9b3a70c4a14")]
 [assembly: System.Reflection.AssemblyProductAttribute("Apptech")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Apptech")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

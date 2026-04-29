@@ -38,10 +38,9 @@ public partial class RegisterPage : ContentPage
         {
             Nombre = txtUsuario.Text,
             Email = txtEmail.Text,
-            nombre_usuario = txtUsuario.Text,
             Contrasena = txtPassword.Text,
-            direccion = "No especificada",
-            telefono = "000000000"
+            Direccion = "No especificada",
+            Telefono = "000000000"
         };
 
         var ok = await _apiService.Register(nuevoUsuario);
