@@ -92,6 +92,24 @@
                                    FontAttributes="Bold"
                                    TextColor="#2ECC71"/>
 
+                                   <HorizontalStackLayout Spacing="10">
+
+                            <Button Text="Editar"
+                                        FontSize="12"
+                                        BackgroundColor="#3498DB"
+                                        TextColor="White"
+                                        Command="{Binding Source={x:Reference Root}, Path=EditarProductoCommand}"
+                                        CommandParameter="{Binding .}" />
+
+                            <Button Text="Eliminar"
+                                        FontSize="12"
+                                        BackgroundColor="#E74C3C"
+                                        TextColor="White"
+                                        Command="{Binding Source={x:Reference Root}, Path=EliminarProductoCommand}"
+                                        CommandParameter="{Binding .}" />
+
+                            </HorizontalStackLayout>
+
                         </VerticalStackLayout>
 
                     </Border>

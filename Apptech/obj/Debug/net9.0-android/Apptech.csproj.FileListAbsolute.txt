@@ -2323,6 +2323,7 @@ C:\TFGFronted\Apptech\bin\Debug\net9.0-android\Microsoft.VisualStudio.DesignTool
 C:\TFGFronted\Apptech\bin\Debug\net9.0-android\Microsoft.VisualStudio.DesignTools.TapContract.dll
 C:\TFGFronted\Apptech\bin\Debug\net9.0-android\Microsoft.VisualStudio.DesignTools.XamlTapContract.dll
 C:\TFGFronted\Apptech\obj\Debug\net9.0-android\Apptech.csproj.Up2Date
+C:\TFGFronted\Apptech\obj\Debug\net9.0-android\resizetizer\r\drawable\perfil_default.png
 C:\TFGFronted\Apptech\obj\Debug\net9.0-android\android\typemaps.arm64-v8a.ll
 C:\TFGFronted\Apptech\obj\Debug\net9.0-android\android\environment.arm64-v8a.ll
 C:\TFGFronted\Apptech\obj\Debug\net9.0-android\android\compressed_assemblies.arm64-v8a.ll
@@ -2332,4 +2333,3 @@ C:\TFGFronted\Apptech\obj\Debug\net9.0-android\android\compressed_assemblies.arm
 C:\TFGFronted\Apptech\obj\Debug\net9.0-android\android\marshal_methods.arm64-v8a.o
 C:\TFGFronted\Apptech\obj\Debug\net9.0-android\android\jni_remap.arm64-v8a.o
 C:\TFGFronted\Apptech\obj\Debug\net9.0-android\app_shared_libraries\arm64-v8a\libxamarin-app.so
-C:\TFGFronted\Apptech\obj\Debug\net9.0-android\resizetizer\r\drawable\perfil_default.png

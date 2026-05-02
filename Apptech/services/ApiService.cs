@@ -73,6 +73,44 @@ public class ApiService
         Console.WriteLine(ex);
     }
   }
+  public async Task<bool> ActualizarProducto(
+    int id,
+    string nombre,
+    string descripcion,
+    decimal precio,
+    int categoriaId,
+    Stream imagen,
+    string nombreArchivo)
+{
+    var token = Preferences.Get("token", "");
+
+    var request = new HttpRequestMessage(HttpMethod.Put, $"api/productos/{id}");
+
+    request.Headers.Authorization =
+        new AuthenticationHeaderValue("Bearer", token);
+
+    var content = new MultipartFormDataContent();
+
+    content.Add(new StringContent(nombre), "nombre");
+    content.Add(new StringContent(descripcion), "descripcion");
+    content.Add(new StringContent(precio.ToString()), "precio");
+    content.Add(new StringContent(categoriaId.ToString()), "categoriaId");
+
+    if (imagen != null)
+    {
+        var fileContent = new StreamContent(imagen);
+        fileContent.Headers.ContentType =
+            new MediaTypeHeaderValue("image/jpeg");
+
+        content.Add(fileContent, "imagen", nombreArchivo);
+    }
+
+    request.Content = content;
+
+    var response = await _httpClient.SendAsync(request);
+
+    return response.IsSuccessStatusCode;
+}
     public async Task<List<Producto>> ObtenerProductos()
     {
         var response = await _httpClient.GetAsync("api/productos");
@@ -283,4 +321,32 @@ public class ApiService
                 PropertyNameCaseInsensitive = true
             });
     }
+    public async Task<bool> EliminarProducto(int id)
+{
+    try
+    {
+        var token = Preferences.Get("token", "");
+
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"api/productos/{id}");
+
+        request.Headers.Authorization =
+            new AuthenticationHeaderValue("Bearer", token.Trim());
+
+        var response = await _httpClient.SendAsync(request);
+
+        var result = await response.Content.ReadAsStringAsync();
+
+        Console.WriteLine("STATUS: " + response.StatusCode);
+        Console.WriteLine("RESPUESTA: " + result);
+
+        return response.IsSuccessStatusCode;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("ERROR EliminarProducto:");
+        Console.WriteLine(ex);
+        return false;
+    }
+}
+    
 }

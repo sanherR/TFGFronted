@@ -1,0 +1,27 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Apptech.views.EditarProductoPage">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+        <Entry Text="{Binding Nombre}" Placeholder="Nombre" />
+
+        <Editor Text="{Binding Descripcion}" Placeholder="Descripción" />
+
+        <Entry Text="{Binding Precio}" Placeholder="Precio" Keyboard="Numeric"/>
+
+        <Entry Text="{Binding CategoriaId}" Placeholder="Categoría" Keyboard="Numeric"/>
+
+        <Button Text="Cambiar imagen"
+                BackgroundColor="#3498DB"
+                TextColor="White"
+                Command="{Binding CambiarImagenCommand}" />
+
+        <Button Text="Guardar cambios"
+                BackgroundColor="Green"
+                TextColor="White"
+                Command="{Binding GuardarCommand}" />
+
+    </VerticalStackLayout>
+
+</ContentPage>

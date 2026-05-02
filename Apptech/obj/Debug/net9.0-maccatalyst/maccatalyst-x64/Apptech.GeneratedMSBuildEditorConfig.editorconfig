@@ -48,6 +48,12 @@ build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.ChatPage.xam
 build_metadata.AdditionalFiles.TargetPath = views\ChatPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\ChatPage.xaml
 
+[C:/TFGFronted/Apptech/views/EditarProductoPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.EditarProductoPage.xaml
+build_metadata.AdditionalFiles.TargetPath = views\EditarProductoPage.xaml
+build_metadata.AdditionalFiles.RelativePath = views\EditarProductoPage.xaml
+
 [C:/TFGFronted/Apptech/views/LoginPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.LoginPage.xaml

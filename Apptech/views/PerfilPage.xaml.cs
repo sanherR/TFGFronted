@@ -70,7 +70,16 @@ public partial class PerfilPage : ContentView, INotifyPropertyChanged
         ItemsActivos = Favoritos;
         OnPropertyChanged(nameof(ItemsActivos));
     });
-    
+
+    public ICommand EditarProductoCommand => new Command<Producto>(async (producto) =>
+    {
+        await Navigation.PushAsync(new EditarProductoPage(producto));
+    });
+    public ICommand EliminarProductoCommand => new Command<Producto>(async (producto) =>
+    {
+        await EliminarProducto(producto);
+    });
+        
 
     public async Task CargarProductos()
     {
@@ -144,6 +153,23 @@ public partial class PerfilPage : ContentView, INotifyPropertyChanged
 
         Perfil_url = ImageSource.FromUri(new Uri(url));
     }
+    private async Task EliminarProducto(Producto producto)
+    {
+        var success = await _apiService.EliminarProducto(producto.Id);
+
+        if (success)
+        {
+            ItemsActivos.Remove(producto);
+        }
+        else
+        {
+            await Application.Current.MainPage.DisplayAlert(
+                "Error",
+                "No se pudo eliminar el producto",
+                "OK");
+        }
+    }
+    
 
     void OnPropertyChanged([CallerMemberName] string name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
