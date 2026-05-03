@@ -1,23 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Apptech.views.VenderPage"
-             Title="Vender Producto"
-             BackgroundColor="#F5F5F5">
-    <StackLayout Padding="20" Spacing="15">
+             Title="Publicar Producto"
+             BackgroundColor="White">
 
-    <!-- Entrada del nombre -->
-    <Entry x:Name="NombreEntry" Placeholder="Nombre del producto" />
-    <Entry x:Name="PrecioEntry" Placeholder="Precio del producto" Keyboard="Numeric" />
-    <Entry x:Name="DescripcionEntry" Placeholder="Descripción del producto" />
-    <Picker x:Name="CategoriaPicker" 
-            Title="Selecciona una categoría"
-            ItemDisplayBinding="{Binding Nombre}"/>
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Label Text="Información del Producto" FontSize="20" FontAttributes="Bold" />
 
-    <Button Text="Seleccionar Imagen y Agregar" Clicked="BtnAgregarProducto_Clicked" />
-    <!-- Botón para agregar producto -->
-    <Button Text="Agregar Producto" Clicked="BtnAgregarProducto_Clicked" />
-
-
-</StackLayout>
+            <Entry x:Name="NombreEntry" Placeholder="Nombre del producto" />
             
-</ContentPage>  
+            <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                <Entry x:Name="PrecioEntry" Grid.Column="0" Placeholder="Precio (€)" Keyboard="Numeric" />
+                <Entry x:Name="StockEntry" Grid.Column="1" Placeholder="Stock" Keyboard="Numeric" Text="1" />
+            </Grid>
+
+            <Entry x:Name="DescripcionEntry" Placeholder="Descripción corta" />
+            
+            <BoxView HeightRequest="1" Color="#EEEEEE" Margin="0,10" />
+
+            <Button Text="SELECCIONAR IMAGEN" 
+                    Clicked="BtnSeleccionarImagen_Clicked" 
+                    BackgroundColor="#3498db" 
+                    TextColor="White" />
+
+            <Button Text="PUBLICAR / ACTUALIZAR" 
+                    Clicked="BtnAgregarProducto_Clicked" 
+                    BackgroundColor="Green" 
+                    TextColor="White"
+                    FontAttributes="Bold" 
+                    HeightRequest="50" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

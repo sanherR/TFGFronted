@@ -1,4 +1,8 @@
 ﻿using Microsoft.Maui.Handlers;
+using Microsoft.Extensions.Logging; // ESTA es la que te falta para el AddDebug
+using Apptech.Services; 
+using Apptech.views;
+
 #if ANDROID
 using Android.Graphics.Drawables;
 using Microsoft.Extensions.Logging;
@@ -44,7 +48,13 @@ SearchBarHandler.Mapper.AppendToMapping("Fix", (handler, view) =>
     native.TranslationZ = 0;
 });
 #endif
-
+// --- REGISTRO DE SERVICIOS Y PÁGINAS ---
+        builder.Services.AddSingleton<ApiService>();
+        
+        builder.Services.AddTransient<LoginPage>();
+        builder.Services.AddTransient<ProductosPage>();
+        builder.Services.AddTransient<VenderPage>();
+        builder.Services.AddTransient<DetalleProductoPage>();
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

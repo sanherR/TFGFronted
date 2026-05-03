@@ -1,4 +1,5 @@
 namespace Apptech.views;
+using Apptech.views;
 using System.Collections.ObjectModel;
 using Apptech.Services;
 using Apptech.Models;
@@ -53,7 +54,7 @@ public partial class ProductosPage: ContentView
                 {
                     Nombre = p.Nombre,
                     Descripcion = p.Descripcion,
-                    precio = (int)p.Precio,
+                    Precio = (int)p.Precio,
                     ImagenUrl = "http://192.168.1.137:5062" + p.ImagenUrl
                 };
                 System.Diagnostics.Debug.WriteLine(
@@ -90,8 +91,20 @@ public partial class ProductosPage: ContentView
             }
         
     }
-    
+    // ESTO ES LO NUEVO: No toca nada de lo anterior, solo añade la navegación
+    private async void OnProductoSeleccionado(object sender, SelectionChangedEventArgs e)
+    {
+        var item = e.CurrentSelection.FirstOrDefault() as ItemPop;
+        if (item != null)
+        {
+            // Navegamos pasando el objeto seleccionado
+            await Navigation.PushAsync(new Apptech.views.DetalleProductoPage(item));
+            // Limpiamos la selección para que puedas volver a clickar
+            ((CollectionView)sender).SelectedItem = null;
+        }
+    }
 }
+
        
        
    
