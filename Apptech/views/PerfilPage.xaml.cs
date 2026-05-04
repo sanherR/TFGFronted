@@ -45,7 +45,7 @@ public partial class PerfilPage : ContentView, INotifyPropertyChanged
 {
     InitializeComponent();
     BindingContext = this;
-
+    _ = CargarFavoritos();
     _ = CargarPerfil();
     _ = CargarProductos();
 
@@ -96,6 +96,20 @@ public partial class PerfilPage : ContentView, INotifyPropertyChanged
         ItemsActivos = Productos;
         OnPropertyChanged(nameof(ItemsActivos));
     }
+    public async Task CargarFavoritos()
+{
+    var token = Preferences.Get("token", "");
+
+    var favoritos = await _apiService.ObtenerFavoritos(token); // TE FALTA ESTE MÉTODO
+
+    Favoritos.Clear();
+
+    foreach (var f in favoritos)
+    {
+        f.ImagenUrl = FixUrl(f.ImagenUrl);
+        Favoritos.Add(f);
+    }
+}
 
     private string FixUrl(string url)
     {

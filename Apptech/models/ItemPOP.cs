@@ -1,9 +1,15 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
 namespace Apptech.Models
 {
-    public class ItemPop
+    public class ItemPop : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private bool _esFavorito;
+
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
@@ -19,7 +25,7 @@ namespace Apptech.Models
         [JsonPropertyName("precio")]
         public decimal Precio { get; set; }
 
-        [JsonPropertyName("categoriaId")] 
+        [JsonPropertyName("categoriaId")]
         public int CategoriaId { get; set; }
 
         [JsonPropertyName("estado_producto")]
@@ -28,11 +34,30 @@ namespace Apptech.Models
         [JsonPropertyName("vendido")]
         public int Vendido { get; set; }
 
-        // Propiedades calculadas para el XAML
         public bool EsVendido => Vendido == 1;
         public bool PuedeComprar => Vendido == 0;
 
+        public bool EsFavorito
+        {
+            get => _esFavorito;
+            set
+            {
+                if (_esFavorito != value)
+                {
+                    _esFavorito = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IconoFavorito));
+                }
+            }
+        }
+
+        public string IconoFavorito =>
+            EsFavorito ? "heart_filled.png" : "heart_empty.png";
+
         [JsonPropertyName("imagenUrl")]
         public string ImagenUrl { get; set; } = string.Empty;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

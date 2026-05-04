@@ -4,8 +4,6 @@ build_property.EnableSingleFileAnalyzer =
 build_property.EnableTrimAnalyzer = false
 build_property.IncludeAllContentForSelfExtract = 
 build_property.TargetFramework = net9.0-ios
-build_property.TargetFrameworkIdentifier = .NETCoreApp
-build_property.TargetFrameworkVersion = v9.0
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = 
 build_property.ProjectTypeGuids = 
@@ -14,91 +12,91 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Apptech
-build_property.ProjectDir = C:\Users\maris\OneDrive\Escritorio\HHH\TFGFronted\Apptech\
+build_property.ProjectDir = C:\TFGFronted\Apptech\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/App.xaml]
+[C:/TFGFronted/Apptech/App.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.App.xaml
 build_metadata.AdditionalFiles.TargetPath = App.xaml
 build_metadata.AdditionalFiles.RelativePath = App.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/AppShell.xaml]
+[C:/TFGFronted/Apptech/AppShell.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.AppShell.xaml
 build_metadata.AdditionalFiles.TargetPath = AppShell.xaml
 build_metadata.AdditionalFiles.RelativePath = AppShell.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/Resources/Styles/Colors.xaml]
+[C:/TFGFronted/Apptech/Resources/Styles/Colors.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.Resources.Styles.Colors.xaml
 build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Colors.xaml
 build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Colors.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/Resources/Styles/Styles.xaml]
+[C:/TFGFronted/Apptech/Resources/Styles/Styles.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.Resources.Styles.Styles.xaml
 build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Styles.xaml
 build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Styles.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/views/ChatPage.xaml]
+[C:/TFGFronted/Apptech/views/ChatPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.ChatPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\ChatPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\ChatPage.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/views/DetalleProductoPage.xaml]
+[C:/TFGFronted/Apptech/views/DetalleProductoPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.DetalleProductoPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\DetalleProductoPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\DetalleProductoPage.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/views/EditarProductoPage.xaml]
+[C:/TFGFronted/Apptech/views/EditarProductoPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.EditarProductoPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\EditarProductoPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\EditarProductoPage.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/views/LoginPage.xaml]
+[C:/TFGFronted/Apptech/views/LoginPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.LoginPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\LoginPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\LoginPage.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/views/MainPage.xaml]
+[C:/TFGFronted/Apptech/views/MainPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.MainPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\MainPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\MainPage.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/views/PerfilPage.xaml]
+[C:/TFGFronted/Apptech/views/PerfilPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.PerfilPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\PerfilPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\PerfilPage.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/views/ProductoCategoriaPage.xaml]
+[C:/TFGFronted/Apptech/views/ProductoCategoriaPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.ProductoCategoriaPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\ProductoCategoriaPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\ProductoCategoriaPage.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/views/ProductosPage.xaml]
+[C:/TFGFronted/Apptech/views/ProductosPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.ProductosPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\ProductosPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\ProductosPage.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/views/RegisterPage.xaml]
+[C:/TFGFronted/Apptech/views/RegisterPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.RegisterPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\RegisterPage.xaml
 build_metadata.AdditionalFiles.RelativePath = views\RegisterPage.xaml
 
-[C:/Users/maris/OneDrive/Escritorio/HHH/TFGFronted/Apptech/views/VenderPage.xaml]
+[C:/TFGFronted/Apptech/views/VenderPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = Apptech.views.VenderPage.xaml
 build_metadata.AdditionalFiles.TargetPath = views\VenderPage.xaml

@@ -1,6 +1,7 @@
+using System.Windows.Input;
 using Apptech.Models;
 using Apptech.Services;
-using System.Windows.Input;
+
 
 namespace Apptech.views;
 
@@ -53,7 +54,6 @@ public partial class EditarProductoPage : ContentPage
     {
         await DisplayAlert("Éxito", "Producto actualizado correctamente", "OK");
         
-        // 🔥 ESTO HACE QUE EL CAMBIO SE VEA EN EL PERFIL AL VOLVER
         MessagingCenter.Send<App>((App)Application.Current, "ActualizarPerfil");
         
         await Navigation.PopAsync();

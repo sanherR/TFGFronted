@@ -52,6 +52,7 @@ public partial class ProductosPage: ContentView
 
                 var item = new ItemPop
                 {
+                    Id = p.Id, 
                     Nombre = p.Nombre,
                     Descripcion = p.Descripcion,
                     Precio = (int)p.Precio,

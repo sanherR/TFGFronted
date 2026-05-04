@@ -1,5 +1,6 @@
 using Apptech.Models;
 using System;
+using Apptech.Services;
 
 namespace Apptech.views
 {
@@ -8,9 +9,10 @@ namespace Apptech.views
         public DetalleProductoPage(ItemPop producto)
         {
             InitializeComponent();
+            Console.WriteLine("🔥 DEBUG DETALLE - ID ENTRADA: " + producto?.Id);
             BindingContext = producto;
         }
-
+        private readonly ApiService _apiService = new ApiService();
         private async void OnComprarClicked(object sender, EventArgs e)
         {
             // Verificamos que el BindingContext sea el modelo correcto
@@ -31,6 +33,25 @@ namespace Apptech.views
 
                     // Regresamos a la lista principal
                     await Navigation.PopAsync();
+                }
+            }
+        }
+       private async void OnFavoritoClicked(object sender, EventArgs e)
+        {
+            var image = (Image)sender;
+
+            if (image.BindingContext is ItemPop producto)
+            {
+                Console.WriteLine("ID PRODUCTO: " + producto.Id);
+
+                producto.EsFavorito = !producto.EsFavorito;
+
+                var success = await _apiService.AñadirFavorito(producto.Id);
+
+                if (!success)
+                {
+                    producto.EsFavorito = !producto.EsFavorito;
+                    
                 }
             }
         }

@@ -16,7 +16,7 @@ public class ApiService
     {
         _httpClient = new HttpClient();
         // Usamos 10.0.2.2 para que el emulador de Android vea el localhost de tu PC
-        _httpClient.BaseAddress = new Uri("http://10.0.2.2:5062/");
+        _httpClient.BaseAddress = new Uri("http://192.168.1.137:5062/");
         _httpClient.Timeout = TimeSpan.FromSeconds(15); 
     }
 
@@ -135,9 +135,12 @@ return response.IsSuccessStatusCode;
     public async Task<List<Producto>> ObtenerProductos()
     {
         var response = await _httpClient.GetAsync("api/productos");
-        if (!response.IsSuccessStatusCode) return new List<Producto>();
+        if (!response.IsSuccessStatusCode) return new List<Producto>()
+        ;
         
         var json = await response.Content.ReadAsStringAsync();
+         Console.WriteLine(json); 
+
         return JsonSerializer.Deserialize<List<Producto>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Producto>();
     }
 
@@ -183,20 +186,29 @@ return response.IsSuccessStatusCode;
     public async Task<Usuario> ObtenerPerfil(string token)
     {
         var request = new HttpRequestMessage(HttpMethod.Get, "api/usuarios/perfil");
+
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
+
         var response = await _httpClient.SendAsync(request);
+
         if (!response.IsSuccessStatusCode) return null;
+
         var json = await response.Content.ReadAsStringAsync();
+
         return JsonSerializer.Deserialize<Usuario>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
     public async Task<bool> EliminarProducto(int id)
-    {
+    {   
         try {
             var token = Preferences.Get("token", "");
+
             var request = new HttpRequestMessage(HttpMethod.Delete, $"api/productos/{id}");
+
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
+
             var response = await _httpClient.SendAsync(request);
+
             return response.IsSuccessStatusCode;
         } catch { return false; }
     }
@@ -205,17 +217,65 @@ return response.IsSuccessStatusCode;
     {
         try {
             var request = new HttpRequestMessage(HttpMethod.Post, "api/usuarios/upload-profile-image");
+
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
+
             var content = new MultipartFormDataContent();
+            
             if (archivoStream != null) {
+
                 var fileContent = new StreamContent(archivoStream);
+
                 fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+
                 content.Add(fileContent, "imagen", nombreArchivoOriginal);
-            } else return null;
+            } 
+            else return null;
+
             request.Content = content;
+
             var response = await _httpClient.SendAsync(request);
+
             var result = await response.Content.ReadAsStringAsync();
+
             return response.IsSuccessStatusCode ? result.Trim('"') : null;
+
         } catch { return null; }
+    }
+    public async Task<bool> AñadirFavorito(int productoId)
+    {
+        try
+        {
+            var token = Preferences.Get("token", "");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"api/favoritos/{productoId}");
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
+
+            var response = await _httpClient.SendAsync(request);
+
+            return response.IsSuccessStatusCode;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+        public async Task<List<Producto>> ObtenerFavoritos(string token)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "api/favoritos");
+
+        request.Headers.Authorization =
+            new AuthenticationHeaderValue("Bearer", token.Trim());
+
+        var response = await _httpClient.SendAsync(request);
+
+        if (!response.IsSuccessStatusCode)
+            return new List<Producto>();
+
+        var json = await response.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<List<Producto>>(json,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+            ?? new List<Producto>();
     }
 }
