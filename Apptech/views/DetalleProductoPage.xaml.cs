@@ -13,29 +13,37 @@ namespace Apptech.views
             BindingContext = producto;
         }
         private readonly ApiService _apiService = new ApiService();
-        private async void OnComprarClicked(object sender, EventArgs e)
+        private async void OnChatClicked(object sender, EventArgs e)
+{
+    if (BindingContext is ItemPop producto)
+    {
+        // 1. Obtener mi ID (quién está usando la app)
+        int miId = Preferences.Get("userId", 0);
+        
+        // 2. Validación: No chatear conmigo mismo
+        if (miId == producto.UsuarioId) 
         {
-            // Verificamos que el BindingContext sea el modelo correcto
-            if (BindingContext is ItemPop producto)
-            {
-                bool confirmar = await DisplayAlert("Confirmar Compra", "¿Deseas reservar este artículo?", "Sí", "No");
-
-                if (confirmar)
-                {
-                    // Simulamos que el producto se ha vendido
-                    producto.Vendido = 1;
-
-                    // Notificamos al XAML para que refresque la visibilidad
-                    OnPropertyChanged(nameof(producto.EsVendido)); 
-                    OnPropertyChanged(nameof(producto.PuedeComprar));
-
-                    await DisplayAlert("¡Logrado!", "Has reservado el producto con éxito.", "OK");
-
-                    // Regresamos a la lista principal
-                    await Navigation.PopAsync();
-                }
-            }
+            await DisplayAlert("Aviso", "Este producto es tuyo.", "OK");
+            return;
         }
+
+        // 3. LA CLAVE: Llamamos a la API para crear el chat en la base de datos
+        // Esto hará que en phpMyAdmin aparezca la fila en la tabla conversaciones
+        int chatIdReal = await _apiService.ObtenerOCrearChat(producto.UsuarioId, producto.Id);
+
+        if (chatIdReal > 0)
+        {
+            // 4. Si el servidor nos da un ID (ej: chat número 5), vamos a la pantalla de burbujas
+            // Usamos el constructor que recibe el ID y el nombre del producto
+            await Navigation.PushAsync(new ChatPage(chatIdReal, producto.Nombre));
+        }
+        else 
+        {
+            // Si llega aquí, es que la API falló (revisa que el servidor esté encendido)
+            await DisplayAlert("Error", "No se pudo conectar con el vendedor.", "OK");
+        }
+    }
+}
        private async void OnFavoritoClicked(object sender, EventArgs e)
         {
             var image = (Image)sender;

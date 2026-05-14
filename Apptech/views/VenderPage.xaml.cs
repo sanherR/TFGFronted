@@ -6,70 +6,134 @@ namespace Apptech.views;
 
 public partial class VenderPage : ContentPage
 {
-    private ApiService _apiService = new ApiService();
+    private readonly ApiService _apiService = new ApiService();
     private Stream _imagenStream;
     private string _nombreArchivo;
+    private List<Categoria> _categorias;
 
     public VenderPage()
     {
         InitializeComponent();
+        // No llamamos a CargarCategorias aquí para evitar errores de interfaz
+    }
+
+    // Este método se ejecuta CADA VEZ que entras a la pantalla
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await CargarCategorias();
+    }
+
+    private async Task CargarCategorias()
+    {
+        try 
+        {
+            Debug.WriteLine("Tentando cargar categorías desde la API...");
+            _categorias = await _apiService.ObtenerCategorias(); 
+            
+            if (_categorias != null && _categorias.Count > 0)
+            {
+                CategoriaPicker.ItemsSource = _categorias;
+                Debug.WriteLine($"Categorías cargadas: {_categorias.Count}");
+            }
+            else 
+            {
+                Debug.WriteLine("La lista de categorías volvió vacía.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error al cargar categorías: {ex.Message}");
+        }
     }
 
     private async void BtnSeleccionarImagen_Clicked(object sender, EventArgs e)
-{
-    var result = await FilePicker.PickAsync(new PickOptions
     {
-        PickerTitle = "Selecciona una imagen",
-        FileTypes = FilePickerFileType.Images
-    });
+        try
+        {
+            var result = await FilePicker.PickAsync(new PickOptions
+            {
+                PickerTitle = "Selecciona una imagen para el producto",
+                FileTypes = FilePickerFileType.Images
+            });
 
-    if (result != null)
-    {
-        _imagenStream = await result.OpenReadAsync();
-        _nombreArchivo = result.FileName;
-
-        // ESTA ES LA LÍNEA QUE AÑADE EL MENSAJE
-        await DisplayAlert("Imagen", "Imagen seleccionada correctamente: " + _nombreArchivo, "OK");
+            if (result != null)
+            {
+                _imagenStream = await result.OpenReadAsync();
+                _nombreArchivo = result.FileName;
+                await DisplayAlert("Imagen", "Imagen cargada correctamente", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "No se pudo cargar la imagen: " + ex.Message, "OK");
+        }
     }
-}
 
     private async void BtnAgregarProducto_Clicked(object sender, EventArgs e)
     {
-        // Validación básica
+        // 1. Validaciones básicas
         if (string.IsNullOrWhiteSpace(NombreEntry.Text) || string.IsNullOrWhiteSpace(PrecioEntry.Text))
         {
-            await DisplayAlert("Error", "El nombre y el precio son obligatorios", "OK");
+            await DisplayAlert("Error", "Nombre y precio son obligatorios", "OK");
             return;
         }
 
-        // Datos del usuario (Asegúrate de tener el ID guardado)
-        int usuarioId = Preferences.Get("userId", 0);
-        int categoriaId = 1; // Valor por defecto o del selector si lo mantuviste
-        decimal precio = decimal.Parse(PrecioEntry.Text);
-
-        // LLAMADA CORREGIDA: Solo los 7 parámetros que definimos en ApiService
-        var exito = await _apiService.CrearProducto(
-            NombreEntry.Text,
-            DescripcionEntry.Text,
-            precio,
-            _imagenStream,
-            _nombreArchivo,
-            usuarioId,
-            categoriaId
-        );
-
-       if (exito)
-{
-    await DisplayAlert("Éxito", "Producto publicado", "OK");
-    
-    // 🔥 ESTA LÍNEA ES LA CLAVE: Envía una señal de "recarga"
-    MessagingCenter.Send<App>((App)Application.Current, "ActualizarPerfil");
-
-    await Navigation.PopAsync();
-}
-        else
+        if (CategoriaPicker.SelectedItem == null || EstadoPicker.SelectedItem == null)
         {
-            await DisplayAlert("Error", "No se pudo publicar el producto", "OK");
+            await DisplayAlert("Error", "Selecciona una categoría y el estado del producto", "OK");
+            return;
+        }
+
+        try 
+        {
+            // 2. Preparación de datos
+            int usuarioId = Preferences.Get("userId", 0);
+            
+            // Obtenemos la categoría seleccionada
+            var categoriaSeleccionada = (Categoria)CategoriaPicker.SelectedItem;
+            int categoriaId = categoriaSeleccionada.Id; 
+            
+            string estado = EstadoPicker.SelectedItem.ToString();
+            string caracteristicas = CaracteristicasEditor.Text ?? "Sin especificar";
+            
+            // Validar formato del precio
+            if (!decimal.TryParse(PrecioEntry.Text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal precio))
+            {
+                await DisplayAlert("Error", "El precio no tiene un formato válido", "OK");
+                return;
+            }
+
+            // 3. Llamada al ApiService
+            var exito = await _apiService.CrearProducto(
+                NombreEntry.Text,
+                DescripcionEntry.Text,
+                precio,
+                _imagenStream,
+                _nombreArchivo,
+                usuarioId,
+                categoriaId,
+                estado,
+                caracteristicas
+            );
+
+            if (exito)
+            {
+                await DisplayAlert("Éxito", "¡Producto publicado!", "OK");
+                
+                // Avisamos a otras pantallas que hay cambios
+                MessagingCenter.Send<App>((App)Application.Current, "ActualizarPerfil");
+                
+                await Navigation.PopAsync();
+            }
+            else
+            {
+                await DisplayAlert("Error", "El servidor no pudo guardar el producto.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "Fallo crítico: " + ex.Message, "OK");
         }
     }
 }

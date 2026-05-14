@@ -5,7 +5,6 @@ using Apptech.views;
 
 #if ANDROID
 using Android.Graphics.Drawables;
-using Microsoft.Extensions.Logging;
 using Android.Content.Res;
 #endif
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Apptech.views.ListaChatsPage"
+             Title="Mensajes">
+
+    <Grid>
+        <CollectionView x:Name="ListaChatsView"
+                        ItemsSource="{Binding MisChats}"
+                        SelectionMode="Single"
+                        SelectionChanged="OnChatSelected">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="15" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                        <Frame Grid.Column="0" Padding="0" CornerRadius="25" HeightRequest="50" WidthRequest="50" IsClippedToBounds="True" HasShadow="False">
+                            <Image Source="{Binding ImagenProductoUrl}" Aspect="AspectFill" />
+                        </Frame>
+
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                            <Label Text="{Binding TituloChat}" FontAttributes="Bold" FontSize="16" />
+                            <Label Text="{Binding UltimoMensaje}" TextColor="Gray" MaxLines="1" LineBreakMode="TailTruncation" />
+                        </VerticalStackLayout>
+
+                        <Label Grid.Column="2" Text="" FontFamily="MaterialIcons" VerticalOptions="Center" TextColor="Silver"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="30">
+                    <Label Text="No tienes conversaciones aún" TextColor="Gray" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </Grid>
+</ContentPage>

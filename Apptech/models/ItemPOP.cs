@@ -9,8 +9,9 @@ namespace Apptech.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _esFavorito;
+        private int _vendido; // Ahora lo manejamos con el setter para notificar cambios
 
-        [JsonPropertyName("id")]
+        [JsonPropertyName("id_producto")]
         public int Id { get; set; }
 
         [JsonPropertyName("nombre")]
@@ -25,17 +26,41 @@ namespace Apptech.Models
         [JsonPropertyName("precio")]
         public decimal Precio { get; set; }
 
-        [JsonPropertyName("categoriaId")]
-        public int CategoriaId { get; set; }
+        public int categoria_id { get; set; }
+
+        [JsonPropertyName("usuario_id")]
+        public int UsuarioId { get; set; }
 
         [JsonPropertyName("estado_producto")]
         public string Estado { get; set; } = string.Empty;
 
+        // Sincronizado con la columna 'vendido' del Backend
         [JsonPropertyName("vendido")]
-        public int Vendido { get; set; }
+        public int Vendido 
+        { 
+            get => _vendido;
+            set
+            {
+                if (_vendido != value)
+                {
+                    _vendido = value;
+                    OnPropertyChanged();
+                    // Notificamos a las propiedades calculadas para que la UI se actualice
+                    OnPropertyChanged(nameof(EsReservado));
+                    OnPropertyChanged(nameof(PuedeComprar));
+                }
+            }
+        }
 
-        public bool EsVendido => Vendido == 1;
+        // --- LÓGICA PARA LA INTERFAZ ---
+        
+        // Si Vendido es 1, mostramos el cartelito de RESERVADO
+        public bool EsReservado => Vendido == 1;
+
+        // Solo se puede comprar si Vendido es 0
         public bool PuedeComprar => Vendido == 0;
+
+        // -------------------------------
 
         public bool EsFavorito
         {

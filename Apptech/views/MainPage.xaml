@@ -6,39 +6,51 @@
              x:Class="Apptech.views.MainPage"
              Title="Menu Principal"
              BackgroundColor="White">
+    
     <ContentPage.Resources>
-        <selectors:MainSelector x:Key="TemplateSelector" >
+        <selectors:MainSelector x:Key="TemplateSelector">
 
             <selectors:MainSelector.ProductosTemplate>
                 <DataTemplate>
                     <views:ProductosPage/>
                 </DataTemplate>
             </selectors:MainSelector.ProductosTemplate>
+
             <selectors:MainSelector.ProductosCategoriaTemplate>
                 <DataTemplate>
-                    <views:ProductoCategoriaPage/>
+                    <ContentView>
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                            <ActivityIndicator IsRunning="True" Color="DeepSkyBlue" />
+                            <Label Text="Cargando categorías..." 
+                                   HorizontalTextAlignment="Center" 
+                                   TextColor="Gray" />
+                        </VerticalStackLayout>
+                    </ContentView>
                 </DataTemplate>
             </selectors:MainSelector.ProductosCategoriaTemplate>
+
             <selectors:MainSelector.ChatTemplate>
                 <DataTemplate>
-                    <views:ChatPage/>
+                    <views:ListaChatsPage/> 
                 </DataTemplate>
             </selectors:MainSelector.ChatTemplate>
+
             <selectors:MainSelector.PerfilTemplate>
                 <DataTemplate>
                     <views:PerfilPage/>
                 </DataTemplate>
             </selectors:MainSelector.PerfilTemplate>
+
         </selectors:MainSelector>
     </ContentPage.Resources>
 
     <Grid RowDefinitions="*, Auto">
-       <CarouselView x:Name="miCarrusel"
-              Loop="False"
-              IsSwipeEnabled="False"
-              PositionChanged="OnPositionChanged"
-              ItemTemplate="{StaticResource TemplateSelector}">
-
+        <CarouselView x:Name="miCarrusel"
+                      Loop="False"
+                      Position="0" 
+                      IsSwipeEnabled="False"
+                      PositionChanged="OnPositionChanged"
+                      ItemTemplate="{StaticResource TemplateSelector}">
             <CarouselView.ItemsSource>
                 <x:Array Type="{x:Type x:String}">
                     <x:String>Productos</x:String>
@@ -47,15 +59,16 @@
                     <x:String>Perfil</x:String>
                 </x:Array>
             </CarouselView.ItemsSource>
-
         </CarouselView>
 
-       <Grid Grid.Row="1"
+        <Grid Grid.Row="1"
               BackgroundColor="Transparent" 
               VerticalOptions="End" 
-              Padding="15, 0, 15, 10"> <Border BackgroundColor="White"       
+              Padding="15, 0, 15, 10"> 
+            <Border BackgroundColor="White"       
                     Padding="10"
-                    StrokeThickness="0"> <Border.StrokeShape>
+                    StrokeThickness="0"> 
+                <Border.StrokeShape>
                     <RoundRectangle CornerRadius="30" />
                 </Border.StrokeShape>
                 
@@ -64,40 +77,40 @@
                 </Border.Shadow>
 
                 <Grid ColumnDefinitions="*, *, *, *, *">
-                   <ImageButton Source="icono_casa.png" 
-                         Grid.Column="0" 
-                         HeightRequest="32" 
-                         VerticalOptions="Center"
-                         HorizontalOptions="Center"
-                         Clicked="IrAProductos" />
-            
-            <ImageButton Source="icono_busqueda_categoria.png" 
-                         Grid.Column="1" 
-                         HeightRequest="32" 
-                         VerticalOptions="Center"
-                         HorizontalOptions="Center"
-                         Clicked="IrACategorias" />
-            
-            <ImageButton Source="icono_vender.png" 
-                         Grid.Column="2" 
-                         HeightRequest="70" 
-                         Clicked="IrAVender"
-                         VerticalOptions="Center"
-                         HorizontalOptions="Center"/>
-            
-            <ImageButton Source="icono_chat.png" 
-                         Grid.Column="3" 
-                         HeightRequest="32" 
-                         VerticalOptions="Center"
-                         HorizontalOptions="Center"
-                         Clicked="IrAChat" />
-            
-            <ImageButton Source="icono_perfil.png" 
-                         Grid.Column="4" 
-                         HeightRequest="32" 
-                         VerticalOptions="Center"
-                         HorizontalOptions="Center"
-                         Clicked="IrAPerfil" />
+                    <ImageButton Source="icono_casa.png" 
+                                 Grid.Column="0" 
+                                 HeightRequest="32" 
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Clicked="IrAProductos" />
+                    
+                    <ImageButton Source="icono_busqueda_categoria.png" 
+                                 Grid.Column="1" 
+                                 HeightRequest="32" 
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Clicked="IrABusqueda" />
+                    
+                    <ImageButton Source="icono_vender.png" 
+                                 Grid.Column="2" 
+                                 HeightRequest="70" 
+                                 Clicked="IrAVender"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"/>
+                    
+                    <ImageButton Source="icono_chat.png" 
+                                 Grid.Column="3" 
+                                 HeightRequest="32" 
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Clicked="IrAChat" />
+                    
+                    <ImageButton Source="icono_perfil.png" 
+                                 Grid.Column="4" 
+                                 HeightRequest="32" 
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Clicked="IrAPerfil" />
                 </Grid>
             </Border>
         </Grid>

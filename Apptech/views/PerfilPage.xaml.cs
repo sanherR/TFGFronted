@@ -5,147 +5,181 @@ using Apptech.Services;
 using Apptech.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Diagnostics;
 
 namespace Apptech.views;
 
-public partial class PerfilPage : ContentView, INotifyPropertyChanged
+public partial class PerfilPage : ContentPage, INotifyPropertyChanged
 {
     private readonly ApiService _apiService = new ApiService();
-    private readonly string baseUrl = "http://192.168.1.137:5062/";
+    // 💡 IMPORTANTE: Asegúrate de que esta IP sea la misma que usas en el ApiService
+    private readonly string baseUrl = "http://10.0.2.2:5062/"; 
 
     public event PropertyChangedEventHandler PropertyChanged;
 
     public ObservableCollection<Producto> Productos { get; set; } = new ObservableCollection<Producto>();
     public ObservableCollection<Producto> Favoritos { get; set; } = new ObservableCollection<Producto>();
-    public ObservableCollection<Producto> ItemsActivos { get; set; } = new ObservableCollection<Producto>();
+    
+    // Cambiamos a una propiedad con campo privado para que OnPropertyChanged funcione bien
+    private ObservableCollection<Producto> _itemsActivos = new ObservableCollection<Producto>();
+    public ObservableCollection<Producto> ItemsActivos
+    {
+        get => _itemsActivos;
+        set
+        {
+            _itemsActivos = value;
+            OnPropertyChanged();
+        }
+    }
 
     private string nombreUsuario;
     public string NombreUsuario
     {
         get => nombreUsuario;
-        set
-        {
-            nombreUsuario = value;
-            OnPropertyChanged();
-        }
+        set { nombreUsuario = value; OnPropertyChanged(); }
     }
 
     private ImageSource perfil_url;
     public ImageSource Perfil_url
     {
         get => perfil_url;
-        set
-        {
-            perfil_url = value;
-            OnPropertyChanged();
-        }
+        set { perfil_url = value; OnPropertyChanged(); }
     }
 
     public PerfilPage()
-{
-    InitializeComponent();
-    BindingContext = this;
-    _ = CargarFavoritos();
-    _ = CargarPerfil();
-    _ = CargarProductos();
-
-    // 🔥 ESCUCHA LA SEÑAL: Cuando llegue "ActualizarPerfil", ejecuta CargarProductos de nuevo
-    MessagingCenter.Subscribe<App>(this, "ActualizarPerfil", (sender) =>
     {
-        MainThread.BeginInvokeOnMainThread(async () =>
+        InitializeComponent();
+        BindingContext = this;
+
+        // ✅ SOLUCIÓN AL CONGELAMIENTO: 
+        // No cargamos nada hasta que el componente esté visualmente listo
+        this.Loaded += async (s, e) =>
         {
-            await CargarProductos(); // Esto limpia la lista y trae los nuevos del server
+            await InicializarDatosAsync();
+        };
+        /*
+        MessagingCenter.Subscribe<App>(this, "ActualizarPerfil", (sender) =>
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await CargarProductos(); 
+            });
         });
-    });
+        */
+    }
+
+    private async Task InicializarDatosAsync()
+{
+    try 
+    {
+        Debug.WriteLine("--- INICIANDO CARGA DE PERFIL ---");
+        
+        // Verificamos si tenemos el token antes de disparar
+        var token = Preferences.Get("token", "");
+        Debug.WriteLine($"DEBUG: Token actual: {(string.IsNullOrEmpty(token) ? "VACÍO ❌" : "OK ✅")}");
+
+        // Ejecuta las 3 cargas
+        await Task.WhenAll(CargarPerfil(), CargarFavoritos(), CargarProductos());
+        
+        Debug.WriteLine("--- CARGA FINALIZADA SIN ERRORES CRÍTICOS ---");
+    }
+    catch (Exception ex)
+    {
+        Debug.WriteLine($"❌ ERROR GLOBAL EN PERFIL: {ex.Message}");
+    }
 }
 
-    public ICommand MostrarProductosCommand => new Command(() =>
-    {
-        ItemsActivos = Productos;
-        OnPropertyChanged(nameof(ItemsActivos));
-    });
+    // --- COMANDOS ---
 
-    public ICommand MostrarFavoritosCommand => new Command(() =>
-    {
-        ItemsActivos = Favoritos;
-        OnPropertyChanged(nameof(ItemsActivos));
-    });
+    public ICommand MostrarProductosCommand => new Command(() => ItemsActivos = Productos);
+
+    public ICommand MostrarFavoritosCommand => new Command(() => ItemsActivos = Favoritos);
 
     public ICommand EditarProductoCommand => new Command<Producto>(async (producto) =>
     {
-        await Navigation.PushAsync(new EditarProductoPage(producto));
+        if (producto != null)
+            await Navigation.PushAsync(new EditarProductoPage(producto));
     });
 
     public ICommand EliminarProductoCommand => new Command<Producto>(async (producto) =>
     {
-        await EliminarProducto(producto);
+        if (producto != null)
+            await EliminarProducto(producto);
     });
+
+    // --- MÉTODOS DE CARGA ---
 
     public async Task CargarProductos()
     {
         var token = Preferences.Get("token", "");
         var productos = await _apiService.ObtenerProductosUsuario(token);
 
-        Productos.Clear();
-        foreach (var producto in productos)
+        if (productos != null)
         {
-            producto.ImagenUrl = FixUrl(producto.ImagenUrl);
-            Productos.Add(producto);
+            Productos.Clear();
+            foreach (var producto in productos)
+            {
+                producto.ImagenUrl = FixUrl(producto.ImagenUrl);
+                Productos.Add(producto);
+            }
+            ItemsActivos = Productos;
         }
-        
-        ItemsActivos = Productos;
-        OnPropertyChanged(nameof(ItemsActivos));
     }
+
     public async Task CargarFavoritos()
-{
-    var token = Preferences.Get("token", "");
-
-    var favoritos = await _apiService.ObtenerFavoritos(token); // TE FALTA ESTE MÉTODO
-
-    Favoritos.Clear();
-
-    foreach (var f in favoritos)
     {
-        f.ImagenUrl = FixUrl(f.ImagenUrl);
-        Favoritos.Add(f);
-    }
-}
+        var token = Preferences.Get("token", "");
+        var favoritos = await _apiService.ObtenerFavoritos(token);
 
-    private string FixUrl(string url)
-    {
-        if (string.IsNullOrEmpty(url))
-            return "";
-
-        if (url.StartsWith("http"))
-            return url;
-
-        return $"{baseUrl}{url.TrimStart('/')}";
+        if (favoritos != null)
+        {
+            Favoritos.Clear();
+            foreach (var f in favoritos)
+            {
+                f.ImagenUrl = FixUrl(f.ImagenUrl);
+                Favoritos.Add(f);
+            }
+        }
     }
 
     public async Task CargarPerfil()
+{
+    var token = Preferences.Get("token", "");
+    var perfil = await _apiService.ObtenerPerfil(token);
+
+    if (perfil == null) 
     {
-        var token = Preferences.Get("token", "");
-        var perfil = await _apiService.ObtenerPerfil(token);
+        System.Diagnostics.Debug.WriteLine("⚠️ CargarPerfil: El objeto 'perfil' llegó NULL desde la API.");
+        return;
+    }
 
-        if (perfil == null) return;
+    System.Diagnostics.Debug.WriteLine($"✅ CargarPerfil: Datos recibidos para {perfil.Nombre}");
 
-        NombreUsuario = perfil.Nombre;
-        Perfil_url = string.IsNullOrEmpty(perfil.PerfilUrl)
-            ? ImageSource.FromFile("perfil_default.png")
-            : ImageSource.FromUri(new Uri(perfil.PerfilUrl));
-            
-        System.Diagnostics.Debug.WriteLine($"URL PERFIL: {perfil.PerfilUrl}");
+    NombreUsuario = perfil.Nombre;
+    OnPropertyChanged(nameof(NombreUsuario));
+        
+        if (string.IsNullOrEmpty(perfil.PerfilUrl))
+        {
+            Perfil_url = ImageSource.FromFile("perfil_default.png");
+        }
+        else
+        {
+            // FixUrl también para la imagen de perfil si viene relativa
+            Perfil_url = ImageSource.FromUri(new Uri(FixUrl(perfil.PerfilUrl)));
+        }
+    }
+
+    private string FixUrl(string url)
+    {
+        if (string.IsNullOrEmpty(url)) return "";
+        if (url.StartsWith("http")) return url;
+        return $"{baseUrl}{url.TrimStart('/')}";
     }
 
     public async void CambiarFoto(object sender, EventArgs e)
     {
         var token = Preferences.Get("token", "");
-
-        if (string.IsNullOrEmpty(token))
-        {
-            await Application.Current.MainPage.DisplayAlert("Error", "Debes iniciar sesión", "OK");
-            return;
-        }
+        if (string.IsNullOrEmpty(token)) return;
 
         var archivo = await MediaPicker.Default.PickPhotoAsync();
         if (archivo == null) return;
@@ -153,31 +187,26 @@ public partial class PerfilPage : ContentView, INotifyPropertyChanged
         using var stream = await archivo.OpenReadAsync();
         var url = await _apiService.SubirImagenPerfil(stream, archivo.FileName, token);
 
-        if (string.IsNullOrEmpty(url))
+        if (!string.IsNullOrEmpty(url))
         {
-            await Application.Current.MainPage.DisplayAlert("Error", "No se pudo subir la imagen", "OK");
-            return;
+            Preferences.Set("PerfilUrl", url);
+            Perfil_url = ImageSource.FromUri(new Uri(FixUrl(url)));
         }
-
-        Preferences.Set("PerfilUrl", url);
-        Perfil_url = ImageSource.FromUri(new Uri(url));
     }
 
     private async Task EliminarProducto(Producto producto)
     {
-        var success = await _apiService.EliminarProducto(producto.Id);
+        bool confirm = await Application.Current.MainPage.DisplayAlert("Eliminar", "¿Estás seguro?", "Sí", "No");
+        if (!confirm) return;
 
+        var success = await _apiService.EliminarProducto(producto.Id);
         if (success)
         {
-            ItemsActivos.Remove(producto);
-            Productos.Remove(producto); // Lo quitamos también de la lista base por si acaso
-        }
-        else
-        {
-            await Application.Current.MainPage.DisplayAlert("Error", "No se pudo eliminar el producto", "OK");
+            Productos.Remove(producto);
+            // Si los favoritos o items activos lo contienen, se refrescará por el binding
         }
     }
 
-    void OnPropertyChanged([CallerMemberName] string name = null)
+    protected void OnPropertyChanged([CallerMemberName] string name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }

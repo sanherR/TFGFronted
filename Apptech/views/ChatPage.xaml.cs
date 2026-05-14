@@ -1,10 +1,261 @@
+using Apptech.Models;
+using Apptech.Services;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Apptech.views;
-public partial class ChatPage: ContentView
-{
 
-	public ChatPage()
-	{
+public partial class ChatPage : ContentPage, INotifyPropertyChanged
+{
+    private readonly ApiService _apiService = new ApiService();
+    private int _chatId;
+    private int _productoId;
+    private int _vendedorId;
+    private bool _isTimerActive;
+
+    // --- PROPIEDADES BINDING (PONLAS AQUÍ) ---
+    public ObservableCollection<Mensaje> Mensajes { get; set; } = new ObservableCollection<Mensaje>();
+    
+    private string _tituloChat;
+    public string TituloChat { get => _tituloChat; set { _tituloChat = value; OnPropertyChanged(nameof(TituloChat)); } }
+
+    // Estas son las nuevas para que no salgan los errores de "property not found"
+    private string _nombreProducto;
+    public string NombreProducto { get => _nombreProducto; set { _nombreProducto = value; OnPropertyChanged(nameof(NombreProducto)); } }
+
+    private string _precioProducto;
+    public string PrecioProducto { get => _precioProducto; set { _precioProducto = value; OnPropertyChanged(nameof(PrecioProducto)); } }
+
+    private string _imagenProducto;
+    public string ImagenProducto { get => _imagenProducto; set { _imagenProducto = value; OnPropertyChanged(nameof(ImagenProducto)); } }
+
+    public bool MostrarInfoProducto => _chatId > 0;
+
+    // --- CONSTRUCTORES ---
+
+    public ChatPage()
+    {
         InitializeComponent();
-	}
+    }
+
+    // Constructor para cuando vienes desde la LISTA DE CHATS (Bandeja de Entrada)
+    public ChatPage(int chatId, string titulo, int productoId = 0)
+{
+    InitializeComponent();
+    _chatId = chatId;
+    _productoId = productoId;
+    TituloChat = titulo;
+    BindingContext = this;
+
+    if (_productoId > 0)
+    {
+        // Ejecutamos la carga en segundo plano
+        Task.Run(async () => await CargarDatosYConfigurar(_productoId));
+    }
+}
+
+    // Constructor para cuando vienes de un producto (Botón Contactar)
+    public ChatPage(ItemPop producto)
+    {
+        InitializeComponent();
+        _productoId = producto.Id;
+        _vendedorId = producto.UsuarioId;
+        BindingContext = this;
+        _ = IniciarChatDesdeProducto(producto);
+    }
+
+    // --- LÓGICA DE INICIO ---
+
+    private async Task IniciarChatDesdeProducto(ItemPop producto)
+    {
+        TituloChat = producto.Nombre;
+        _chatId = await _apiService.ObtenerOCrearChat(producto.UsuarioId, producto.Id);
+        
+        ConfigurarBotonReserva(); 
+        await ActualizarListaMensajes();
+    }
+
+    private async Task CargarDatosYConfigurar(int idProducto)
+{
+    Debug.WriteLine($"DEBUG: Iniciando carga para producto ID: {idProducto}");
+    
+    var producto = await _apiService.GetProductoById(idProducto);
+    
+    if (producto != null)
+    {
+        _vendedorId = producto.UsuarioId;
+        
+        // Guardamos el estado real que viene de la base de datos
+        int estadoVendido = producto.Vendido; 
+
+        NombreProducto = producto.Nombre;
+        PrecioProducto = $"{producto.Precio}€";
+        ImagenProducto = producto.ImagenUrl;
+
+        Debug.WriteLine($"DEBUG: Datos cargados. Vendedor: {_vendedorId} | Estado: {estadoVendido}");
+
+        // Aquí es donde llamamos al método con el parámetro correcto
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            ConfigurarBotonReserva(estadoVendido);
+        });
+    }
+}
+
+   private void ConfigurarBotonReserva(int estadoVendido = 0) 
+{
+    int miId = Preferences.Get("userId", 0);
+
+    // Si ya está reservado o vendido en la BD, bloqueamos el botón
+    if (estadoVendido > 0)
+    {
+        BotonReservar.IsEnabled = false;
+        BotonReservar.BackgroundColor = Colors.Gray;
+        BotonReservar.Text = estadoVendido == 1 ? "Producto Reservado" : "Producto Vendido";
+        return;
+    }
+
+    // Lógica normal de colores si está disponible (0)
+    if (miId != 0 && miId == _vendedorId)
+    {
+        BotonReservar.IsEnabled = true;
+        BotonReservar.Text = "Aceptar Reserva";
+        BotonReservar.BackgroundColor = Colors.Green;
+    }
+    else
+    {
+        BotonReservar.IsEnabled = true;
+        BotonReservar.Text = "Solicitar Reserva";
+        BotonReservar.BackgroundColor = Colors.DarkBlue;
+    }
+}
+    // --- CICLO DE VIDA Y REFRESCO ---
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        _isTimerActive = true;
+        await ActualizarListaMensajes();
+
+        Device.StartTimer(TimeSpan.FromSeconds(3), () => {
+            if (_isTimerActive) {
+                _ = ActualizarListaMensajes();
+                return true; 
+            }
+            return false;
+        });
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _isTimerActive = false; 
+    }
+
+    private async Task ActualizarListaMensajes()
+    {
+        if (_chatId <= 0) return;
+
+        var nuevosMensajes = await _apiService.ObtenerMensajes(_chatId);
+        
+        if (nuevosMensajes != null && nuevosMensajes.Count != Mensajes.Count)
+        {
+            MainThread.BeginInvokeOnMainThread(() => {
+                Mensajes.Clear();
+                foreach (var m in nuevosMensajes) Mensajes.Add(m);
+                
+                if (Mensajes.Count > 0)
+                    MessagesList.ScrollTo(Mensajes.Count - 1);
+            });
+        }
+    }
+
+    // --- ACCIONES DE USUARIO ---
+
+    private async void OnEnviarClicked(object sender, EventArgs e)
+    {
+        string texto = TxtMensaje.Text;
+        if (string.IsNullOrWhiteSpace(texto) || _chatId <= 0) return;
+
+        TxtMensaje.Text = string.Empty;
+        bool enviado = await _apiService.EnviarMensaje(_chatId, texto);
+        
+        if (enviado) await ActualizarListaMensajes();
+        else await DisplayAlert("Error", "No se pudo enviar el mensaje", "OK");
+    }
+
+    private async void OnReservarClicked(object sender, EventArgs e)
+{
+    int miId = Preferences.Get("userId", 0);
+
+    // CASO A: ERES EL VENDEDOR (Aceptas la reserva)
+    if (miId == _vendedorId)
+    {
+        bool confirmar = await DisplayAlert("Confirmar", "¿Quieres reservar este producto a este usuario?", "Sí", "No");
+        if (!confirmar) return;
+
+        int compradorId = await ObtenerIdDelOtroUsuario(); 
+        
+        if (compradorId == 0)
+        {
+            await DisplayAlert("Error", "No se ha podido identificar al comprador a través de los mensajes.", "OK");
+            return;
+        }
+
+        bool exito = await _apiService.AceptarReservaProducto(_productoId, compradorId);
+        
+        if (exito)
+        {
+            await DisplayAlert("Éxito", "Has aceptado la reserva.", "OK");
+            
+            // Forzamos que el botón se ponga gris y diga "Producto Reservado"
+            // Le pasamos el estado 1 (que significa Reservado)
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                ConfigurarBotonReserva(1);
+            });
+        }
+        else
+        {
+            await DisplayAlert("Error", "No se pudo actualizar el estado en el servidor.", "OK");
+        }
+    }
+    // CASO B: ERES EL COMPRADOR (Pides la reserva)
+    else
+    {
+        bool confirmar = await DisplayAlert("Solicitar", "¿Enviar solicitud de reserva?", "Sí", "No");
+        if (!confirmar) return;
+
+        string mensajeAuto = "¡Hola! Estoy muy interesado. ¿Me podrías reservar el producto?";
+        bool enviado = await _apiService.EnviarMensaje(_chatId, mensajeAuto);
+
+        if (enviado)
+        {
+            await ActualizarListaMensajes();
+            await DisplayAlert("Solicitado", "Le hemos enviado tu petición al vendedor.", "OK");
+            
+            // Cambiamos el texto para que el comprador sepa que ya ha pedido
+            BotonReservar.Text = "Solicitud Enviada";
+            BotonReservar.IsEnabled = false;
+            BotonReservar.BackgroundColor = Colors.Gray;
+        }
+    }
+}
+
+    private async Task<int> ObtenerIdDelOtroUsuario()
+    {
+        var mensajes = await _apiService.ObtenerMensajes(_chatId);
+        if (mensajes == null || mensajes.Count == 0) return 0;
+
+        int miId = Preferences.Get("userId", 0);
+        
+        // El otro usuario es el que tiene un EmisorId distinto al mío
+        var otro = mensajes.FirstOrDefault(m => m.EmisorId != miId);
+        return otro?.EmisorId ?? 0;
+    }
+
+    // --- NOTIFICACIÓN DE CAMBIOS ---
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }

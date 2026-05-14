@@ -1,8 +1,7 @@
 namespace Apptech.selectors;
-public class MainSelector: DataTemplateSelector
+
+public class MainSelector : DataTemplateSelector
 {
-
-
     public DataTemplate ProductosTemplate { get; set; }    
     public DataTemplate ProductosCategoriaTemplate { get; set; }
     public DataTemplate ChatTemplate { get; set; }
@@ -10,14 +9,21 @@ public class MainSelector: DataTemplateSelector
 
     protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
     {
-       return item switch
+        // Añadimos un log para ver qué llega cuando se congela
+        System.Diagnostics.Debug.WriteLine($"Selector recibiendo: {item ?? "NULO"}");
+
+        // Convertimos a string por si acaso llega un objeto
+        string key = item?.ToString() ?? string.Empty;
+
+        return key switch
         {
             "Productos" => ProductosTemplate,
             "Categorias" => ProductosCategoriaTemplate,
             "Chat" => ChatTemplate,
             "Perfil" => PerfilTemplate,
-            _ => null
+            // IMPORTANTE: Nunca devuelvas null. 
+            // Si no sabe qué es, que devuelva la página principal por defecto.
+            _ => ProductosTemplate 
         };
     } 
-
 }
