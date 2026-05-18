@@ -103,55 +103,103 @@ public partial class ChatPage : ContentPage, INotifyPropertyChanged
     }
 }
 
-   private void ConfigurarBotonReserva(int estadoVendido = 0) 
+   private void ConfigurarBotonReserva(int estadoVendido = 0)
 {
     int miId = Preferences.Get("userId", 0);
+    bool soyVendedor = miId == _vendedorId;
 
-    // Si ya está reservado o vendido en la BD, bloqueamos el botón
-    if (estadoVendido > 0)
-    {
-        BotonReservar.IsEnabled = false;
-        BotonReservar.BackgroundColor = Colors.Gray;
-        BotonReservar.Text = estadoVendido == 1 ? "Producto Reservado" : "Producto Vendido";
-        return;
-    }
+    // Reset de visibilidad
+    BotonReservar.IsVisible = false;
+    GridAccionesVendedor.IsVisible = false;
+    LabelVendido.IsVisible = false;
 
-    // Lógica normal de colores si está disponible (0)
-    if (miId != 0 && miId == _vendedorId)
+    if (soyVendedor)
     {
-        BotonReservar.IsEnabled = true;
-        BotonReservar.Text = "Aceptar Reserva";
-        BotonReservar.BackgroundColor = Colors.Green;
+        switch (estadoVendido)
+        {
+            case 0: // Disponible
+                BotonReservar.IsVisible = true;
+                BotonReservar.Text = "ACEPTAR RESERVA";
+                BotonReservar.BackgroundColor = Colors.Green;
+                break;
+            case 1: // Reservado
+                GridAccionesVendedor.IsVisible = true; // Mostramos los dos botones nuevos
+                break;
+            case 2: // Vendido
+                LabelVendido.IsVisible = true;
+                break;
+        }
     }
-    else
+    else // Lógica para el Comprador
     {
-        BotonReservar.IsEnabled = true;
-        BotonReservar.Text = "Solicitar Reserva";
-        BotonReservar.BackgroundColor = Colors.DarkBlue;
+        if (estadoVendido == 2)
+        {
+            LabelVendido.IsVisible = true;
+            LabelVendido.Text = "PRODUCTO VENDIDO";
+        }
+        else if (estadoVendido == 1)
+        {
+            BotonReservar.IsVisible = true;
+            BotonReservar.Text = "PRODUCTO RESERVADO";
+            BotonReservar.IsEnabled = false;
+            BotonReservar.BackgroundColor = Colors.Gray;
+        }
+        else
+        {
+            BotonReservar.IsVisible = true;
+            BotonReservar.Text = "SOLICITAR RESERVA";
+            BotonReservar.BackgroundColor = Colors.DarkBlue;
+        }
     }
 }
-    // --- CICLO DE VIDA Y REFRESCO ---
+private async void OnConfirmarVentaClicked(object sender, EventArgs e)
+{
+    bool confirmar = await DisplayAlert("Confirmar Venta", 
+        "¿Confirmas que has vendido el producto? Ya no aparecerá en la tienda.", 
+        "Sí, vendido", "Cancelar");
 
-    protected override async void OnAppearing()
+    if (confirmar)
     {
-        base.OnAppearing();
-        _isTimerActive = true;
-        await ActualizarListaMensajes();
+        var exito = await _apiService.ConfirmarVentaProducto(_productoId);
+        if (exito)
+        {
+            await _apiService.EnviarMensaje(_chatId, "SISTEMA: ¡El vendedor ha confirmado la venta final!");
+            
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                ConfigurarBotonReserva(2); // Cambia la interfaz a modo "Vendido"
+            });
 
-        Device.StartTimer(TimeSpan.FromSeconds(3), () => {
-            if (_isTimerActive) {
-                _ = ActualizarListaMensajes();
-                return true; 
-            }
-            return false;
-        });
+            await ActualizarListaMensajes();
+            await DisplayAlert("¡Enhorabuena!", "Venta finalizada con éxito", "OK");
+        }
+        else
+        {
+            await DisplayAlert("Error", "No se pudo marcar como vendido", "OK");
+        }
     }
+}
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
         _isTimerActive = false; 
     }
+    protected override async void OnAppearing()
+{
+    base.OnAppearing();
+    _isTimerActive = true;
+    await ActualizarListaMensajes();
+
+    // Timer para refrescar el chat automáticamente
+    Device.StartTimer(TimeSpan.FromSeconds(3), () => {
+        if (_isTimerActive) {
+            _ = ActualizarListaMensajes();
+            return true; 
+        }
+        return false;
+    });
+}
 
     private async Task ActualizarListaMensajes()
     {
@@ -189,59 +237,78 @@ public partial class ChatPage : ContentPage, INotifyPropertyChanged
 {
     int miId = Preferences.Get("userId", 0);
 
-    // CASO A: ERES EL VENDEDOR (Aceptas la reserva)
+    // --- CASO VENDEDOR ---
     if (miId == _vendedorId)
     {
-        bool confirmar = await DisplayAlert("Confirmar", "¿Quieres reservar este producto a este usuario?", "Sí", "No");
-        if (!confirmar) return;
-
-        int compradorId = await ObtenerIdDelOtroUsuario(); 
-        
-        if (compradorId == 0)
+        // 1. LÓGICA DE ANULAR (Si el Grid de los dos botones está visible)
+        if (GridAccionesVendedor.IsVisible) 
         {
-            await DisplayAlert("Error", "No se ha podido identificar al comprador a través de los mensajes.", "OK");
-            return;
+            bool confirmar = await DisplayAlert("Anular Reserva", "¿Quieres volver a poner el producto a la venta?", "Sí, anular", "No");
+            if (!confirmar) return;
+
+            var exito = await _apiService.CancelarReservaProducto(_productoId);
+            if (exito)
+            {
+                await _apiService.EnviarMensaje(_chatId, "SISTEMA: El vendedor ha anulado la reserva.");
+                
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    ConfigurarBotonReserva(0); // 0 lo vuelve a poner en "Aceptar Reserva"
+                });
+
+                await ActualizarListaMensajes();
+                await DisplayAlert("Éxito", "Reserva anulada correctamente", "OK");
+            }
+            else
+            {
+                await DisplayAlert("Error", "No se pudo anular la reserva en el servidor", "OK");
+            }
+            return; 
         }
 
-        bool exito = await _apiService.AceptarReservaProducto(_productoId, compradorId);
-        
-        if (exito)
+        // 2. LÓGICA DE ACEPTAR (Si solo está el botón de "Aceptar Reserva")
+        bool confirmarReserva = await DisplayAlert("Confirmar", "¿Aceptar la reserva para este usuario?", "Sí, aceptar", "No");
+        if (!confirmarReserva) return;
+
+        int compradorId = await ObtenerIdDelOtroUsuario();
+        if (compradorId == 0) return;
+
+        bool ok = await _apiService.AceptarReservaProducto(_productoId, compradorId);
+        if (ok)
         {
-            await DisplayAlert("Éxito", "Has aceptado la reserva.", "OK");
+            await _apiService.EnviarMensaje(_chatId, "SISTEMA: ¡Reserva aceptada!");
             
-            // Forzamos que el botón se ponga gris y diga "Producto Reservado"
-            // Le pasamos el estado 1 (que significa Reservado)
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                ConfigurarBotonReserva(1);
+                ConfigurarBotonReserva(1); // 1 muestra los botones de "Vender" y "Anular"
             });
-        }
-        else
-        {
-            await DisplayAlert("Error", "No se pudo actualizar el estado en el servidor.", "OK");
+
+            await ActualizarListaMensajes();
+            await DisplayAlert("Éxito", "Has aceptado la reserva", "OK");
         }
     }
-    // CASO B: ERES EL COMPRADOR (Pides la reserva)
+    // --- CASO COMPRADOR ---
     else
     {
-        bool confirmar = await DisplayAlert("Solicitar", "¿Enviar solicitud de reserva?", "Sí", "No");
-        if (!confirmar) return;
+        bool solicitar = await DisplayAlert("Solicitar", "¿Enviar solicitud de reserva al vendedor?", "Sí", "No");
+        if (!solicitar) return;
 
-        string mensajeAuto = "¡Hola! Estoy muy interesado. ¿Me podrías reservar el producto?";
-        bool enviado = await _apiService.EnviarMensaje(_chatId, mensajeAuto);
-
+        bool enviado = await _apiService.EnviarMensaje(_chatId, "SOLICITUD: Hola, me gustaría reservar este producto. ¿Es posible?");
         if (enviado)
         {
             await ActualizarListaMensajes();
-            await DisplayAlert("Solicitado", "Le hemos enviado tu petición al vendedor.", "OK");
             
-            // Cambiamos el texto para que el comprador sepa que ya ha pedido
-            BotonReservar.Text = "Solicitud Enviada";
-            BotonReservar.IsEnabled = false;
-            BotonReservar.BackgroundColor = Colors.Gray;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                BotonReservar.Text = "Solicitud Enviada";
+                BotonReservar.IsEnabled = false;
+                BotonReservar.BackgroundColor = Colors.Gray;
+            });
         }
     }
 }
+
+
 
     private async Task<int> ObtenerIdDelOtroUsuario()
     {

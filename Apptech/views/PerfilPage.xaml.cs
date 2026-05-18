@@ -67,7 +67,12 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
         });
         */
     }
-
+    protected override async void OnAppearing()
+{
+    base.OnAppearing();
+    // Forzamos la limpieza y recarga cada vez que entramos a la pestaña
+    await CargarProductos();
+}
     private async Task InicializarDatosAsync()
 {
     try 
@@ -110,21 +115,39 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
     // --- MÉTODOS DE CARGA ---
 
     public async Task CargarProductos()
+{
+    try 
     {
         var token = Preferences.Get("token", "");
-        var productos = await _apiService.ObtenerProductosUsuario(token);
+        var productosRecibidos = await _apiService.ObtenerProductosUsuario(token);
 
-        if (productos != null)
+        if (productosRecibidos != null)
         {
+            // 1. Limpiamos las listas
             Productos.Clear();
-            foreach (var producto in productos)
+            
+            foreach (var p in productosRecibidos) 
             {
-                producto.ImagenUrl = FixUrl(producto.ImagenUrl);
-                Productos.Add(producto);
+                // 2. Filtro: Si Vendido es 2, es que ya se completó la venta.
+                // Los que son 0 (disponibles) o 1 (reservados) deben salir en tu perfil.
+                if (p.Vendido != 2) 
+                {
+                    p.ImagenUrl = FixUrl(p.ImagenUrl);
+                    Productos.Add(p);
+                }
             }
-            ItemsActivos = Productos;
+            
+            // 3. LA CLAVE: Asignamos a ItemsActivos para que la UI se entere
+            ItemsActivos = new ObservableCollection<Producto>(Productos);
+            
+            Debug.WriteLine($"✅ Productos cargados en perfil: {ItemsActivos.Count}");
         }
     }
+    catch (Exception ex)
+    {
+        Debug.WriteLine("❌ Error al cargar perfil: " + ex.Message);
+    }
+}
 
     public async Task CargarFavoritos()
     {

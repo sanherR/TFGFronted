@@ -86,6 +86,13 @@
                             BackgroundColor="#F5F5F5" 
                             StrokeShape="RoundRectangle 15" 
                             StrokeThickness="0">
+                        
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding Source={x:Reference root}, Path=ProductoSeleccionadoCommand}" 
+                                CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+
                         <VerticalStackLayout Padding="10" Spacing="2">
                             <Image Source="{Binding ImagenUrl}" 
                                    Aspect="AspectFill" 

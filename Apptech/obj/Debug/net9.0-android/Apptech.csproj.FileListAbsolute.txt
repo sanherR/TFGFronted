@@ -6,10 +6,6 @@ C:\Users\ruben\TFGFronted\Apptech\bin\Debug\net9.0-android\com.companyname.appte
 C:\Users\ruben\TFGFronted\Apptech\bin\Debug\net9.0-android\com.companyname.apptech-Signed.aab
 C:\Users\ruben\TFGFronted\Apptech\bin\Debug\net9.0-android\com.companyname.apptech-Signed.apk
 C:\Users\ruben\TFGFronted\Apptech\bin\Debug\net9.0-android\com.companyname.apptech-Signed.apk.idsig
-C:\Users\ruben\TFGFronted\Apptech\bin\Debug\net9.0-android\Microsoft.Maui.Controls.HotReload.Forms.dll
-C:\Users\ruben\TFGFronted\Apptech\bin\Debug\net9.0-android\Microsoft.VisualStudio.DesignTools.MobileTapContracts.dll
-C:\Users\ruben\TFGFronted\Apptech\bin\Debug\net9.0-android\Microsoft.VisualStudio.DesignTools.TapContract.dll
-C:\Users\ruben\TFGFronted\Apptech\bin\Debug\net9.0-android\Microsoft.VisualStudio.DesignTools.XamlTapContract.dll
 C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
 C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\build.props
 C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\adb.props
@@ -140,7 +136,6 @@ C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\Apptech.AssemblyInfo.
 C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\Apptech.csproj.CoreCompileInputs.cache
 C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\Apptech.sourcelink.json
 C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\XamlC.stamp
-C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\Apptech.csproj.Up2Date
 C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\Apptech.dll
 C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\Apptech.pdb
 C:\Users\ruben\TFGFronted\Apptech\obj\Debug\net9.0-android\Apptech.genruntimeconfig.cache

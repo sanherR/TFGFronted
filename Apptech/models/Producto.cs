@@ -12,6 +12,8 @@ namespace Apptech.Models
 
         [JsonPropertyName("descripcion")]
         public string Descripcion { get; set; } = string.Empty;
+        [JsonPropertyName("vendido")]
+public int Vendido { get; set; } // 0=Libre, 1=Reservado, 2=Vendido
 
         [JsonPropertyName("precio")]
         public int Precio { get; set; } 

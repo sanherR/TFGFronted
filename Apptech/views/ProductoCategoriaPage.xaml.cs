@@ -4,26 +4,24 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Diagnostics; 
+
 namespace Apptech.views;
 
 public partial class ProductoCategoriaPage : ContentPage, INotifyPropertyChanged
 {
     private readonly ApiService _apiService = new();
     
-    // Colecciones para la interfaz
     public ObservableCollection<ItemPop> Sugerencias { get; set; } = new();
     public ObservableCollection<Categoria> ListaCategorias { get; set; } = new();
     public ObservableCollection<ItemPop> ProductosCategoria { get; set; } = new();
 
     private List<ItemPop> ListaProductos { get; set; } = new();
     
-    // Comandos
     public Command<ItemPop> ProductoSeleccionadoCommand { get; private set; }
     public Command<Categoria> CategoriaSeleccionadaCommand { get; private set; }
 
     public bool MostrarSugerencias => Sugerencias.Count > 0;
 
-    // Propiedad para la categoría seleccionada
     private Categoria _categoriaActual = new Categoria { Id = 0, Nombre = "Todas" };
     public Categoria CategoriaActual 
     { 
@@ -31,7 +29,6 @@ public partial class ProductoCategoriaPage : ContentPage, INotifyPropertyChanged
         set { _categoriaActual = value; OnPropertyChanged(); } 
     }
 
-    // Propiedad para el texto del buscador
     private string _textoBusqueda = string.Empty;
     public string TextoBusqueda 
     { 
@@ -55,56 +52,49 @@ public partial class ProductoCategoriaPage : ContentPage, INotifyPropertyChanged
         await CargarProductosCategorias();
     }
 
-   public async Task CargarProductosCategorias()
-{
-    try
+    public async Task CargarProductosCategorias()
     {
-        var listaCategorias = await _apiService.ObtenerCategorias();
-        var productosDb = await _apiService.ObtenerProductos(); 
-
-        if (productosDb != null)
+        try
         {
-            // Mapeo manual forzando la variable con guion bajo
-            ListaProductos = productosDb.Select(p => 
+            var listaCategorias = await _apiService.ObtenerCategorias();
+            var productosDb = await _apiService.ObtenerProductos(); 
+
+            if (productosDb != null)
             {
-                var nuevoItem = new ItemPop
+                ListaProductos = productosDb.Select(p => new ItemPop
                 {
                     Id = p.Id,
                     Nombre = p.Nombre,
                     Descripcion = p.Descripcion,
-                    Precio = p.Precio,
-                    // ASIGNACIÓN CRÍTICA:
-                    categoria_id = p.categoria_id, 
-                    ImagenUrl = p.ImagenUrl.StartsWith("http") ? p.ImagenUrl : $"http://10.0.2.2:5062{p.ImagenUrl}",
+                    Precio = (decimal)p.Precio, 
+                    categoria_id = p.categoria_id,
+                    UsuarioId = p.UsuarioId,
                     Estado = p.Estado,
-                    Caracteristicas = p.Caracteristicas
-                };
-
-                // Esto imprimirá en consola el nombre y el ID de cada producto según llega
-                Debug.WriteLine($"[DATOS API] Producto: {nuevoItem.Nombre} | ID Categoria: {nuevoItem.categoria_id}");
-                
-                return nuevoItem;
-            }).ToList();
-        }
-
-        if (listaCategorias != null)
-        {
-            ListaCategorias.Clear();
-            ListaCategorias.Add(new Categoria { Id = 0, Nombre = "Todas" });
-            foreach (var cat in listaCategorias) 
-            {
-                ListaCategorias.Add(cat);
+                    Caracteristicas = p.Caracteristicas,
+                    ImagenUrl = p.ImagenUrl.StartsWith("http") ? p.ImagenUrl : $"http://10.0.2.2:5062{p.ImagenUrl}",
+                    
+                    // USAMOS EL NOMBRE EXACTO DE TU ITEMPOP: Vendido
+                    Vendido = p.Vendido 
+                }).ToList();
             }
-            
-            // Forzamos el filtro inicial
-            FiltrarProductosPorCategoria(ListaCategorias[0]); 
+
+            if (listaCategorias != null)
+            {
+                ListaCategorias.Clear();
+                ListaCategorias.Add(new Categoria { Id = 0, Nombre = "Todas" });
+                foreach (var cat in listaCategorias) 
+                {
+                    ListaCategorias.Add(cat);
+                }
+                FiltrarProductosPorCategoria(ListaCategorias[0]); 
+            }
+        }
+        catch (Exception ex) 
+        { 
+            Debug.WriteLine($"Error crítico en Carga: {ex.Message}"); 
         }
     }
-    catch (Exception ex) 
-    { 
-        Debug.WriteLine($"Error crítico en Carga: {ex.Message}"); 
-    }
-}
+
     private void FiltrarProductosPorCategoria(Categoria categoria)
     {
         if (categoria == null) return;
@@ -113,38 +103,28 @@ public partial class ProductoCategoriaPage : ContentPage, INotifyPropertyChanged
     }
 
     private void AplicarFiltro()
-{
-    MainThread.BeginInvokeOnMainThread(() => {
-        // Esto te dirá en la consola de Visual Studio qué está viendo la App realmente
-Debug.WriteLine($"BUSCANDO: {CategoriaActual.Id} | DISPONIBLE EN APP: {string.Join(",", ListaProductos.Select(x => x.categoria_id))}");
-        ProductosCategoria.Clear();
-        
-        // 1. Empezamos con la lista completa
-        var filtrados = ListaProductos.AsEnumerable();
+    {
+        MainThread.BeginInvokeOnMainThread(() => {
+            ProductosCategoria.Clear();
+            var filtrados = ListaProductos.AsEnumerable();
 
-        // 2. Filtro por Categoría (Fíjate en la C MAYÚSCULA)
-        if (CategoriaActual != null && CategoriaActual.Id != 0)
-        {
-            // Usamos CategoriaId con C mayúscula porque así está en tu ItemPop.cs
-            filtrados = filtrados.Where(p => p.categoria_id == CategoriaActual.Id);
-        }
+            if (CategoriaActual != null && CategoriaActual.Id != 0)
+            {
+                filtrados = filtrados.Where(p => p.categoria_id == CategoriaActual.Id);
+            }
 
-        // 3. Filtro por Texto del buscador
-        if (!string.IsNullOrWhiteSpace(TextoBusqueda))
-        {
-            filtrados = filtrados.Where(p => p.Nombre.ToLower().Contains(TextoBusqueda.ToLower()));
-        }
+            if (!string.IsNullOrWhiteSpace(TextoBusqueda))
+            {
+                filtrados = filtrados.Where(p => p.Nombre.ToLower().Contains(TextoBusqueda.ToLower()));
+            }
 
-        // 4. Cargamos los resultados finales
-        foreach (var p in filtrados.ToList())
-        {
-            ProductosCategoria.Add(p);
-        }
-
-        // Ahora el Debug funcionará porque añadimos el "using" arriba
-        Debug.WriteLine($"✅ Filtro aplicado. Categoria: {CategoriaActual?.Nombre}, Resultados: {ProductosCategoria.Count}");
-    });
-}
+            foreach (var p in filtrados)
+            {
+                ProductosCategoria.Add(p);
+            }
+            OnPropertyChanged(nameof(MostrarSugerencias));
+        });
+    }
 
     private void Buscador(object sender, TextChangedEventArgs e)
     {
@@ -153,6 +133,7 @@ Debug.WriteLine($"BUSCANDO: {CategoriaActual.Id} | DISPONIBLE EN APP: {string.Jo
         if (string.IsNullOrWhiteSpace(TextoBusqueda))
         {
             Sugerencias.Clear();
+            OnPropertyChanged(nameof(MostrarSugerencias));
             AplicarFiltro();
             return;
         }
@@ -168,15 +149,27 @@ Debug.WriteLine($"BUSCANDO: {CategoriaActual.Id} | DISPONIBLE EN APP: {string.Jo
             Sugerencias.Add(s);
         }
 
+        OnPropertyChanged(nameof(MostrarSugerencias));
         AplicarFiltro();
     }
 
-    private void SeleccionarProducto(ItemPop producto)
+    private async void SeleccionarProducto(ItemPop item)
     {
-        if (producto == null) return;
-        TextoBusqueda = producto.Nombre;
-        Sugerencias.Clear();
-        AplicarFiltro();
+        if (item == null) return;
+
+        try
+        {
+            Sugerencias.Clear();
+            OnPropertyChanged(nameof(MostrarSugerencias));
+
+            // NAVEGACIÓN DIRECTA CON EL ITEMPOP
+            // Esto elimina el error de la captura porque enviamos el tipo correcto.
+            await Navigation.PushAsync(new DetalleProductoPage(item));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error al navegar: {ex.Message}");
+        }
     }
 
     public event PropertyChangedEventHandler PropertyChanged;

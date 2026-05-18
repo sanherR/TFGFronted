@@ -6,107 +6,112 @@
              x:Name="this"
              BackgroundColor="White">
 
-    <Grid RowDefinitions="Auto, *" RowSpacing="10" Padding="0, 10, 0, 0">
+    <RefreshView x:Name="RefreshControl"
+                 Command="{Binding ActualizarProductosCommand, Source={x:Reference this}}"
+                 RefreshColor="DarkViolet">
 
-        <VerticalStackLayout Grid.Row="0" Spacing="10">
-            <Label Text="Novedades" 
-                   FontSize="24" 
-                   FontAttributes="Bold" 
-                   Margin="20,0" 
-                   TextColor="Black" />
+        <Grid RowDefinitions="Auto, *" RowSpacing="10" Padding="0, 10, 0, 0">
 
-            <CollectionView ItemsSource="{Binding Novedades, Source={x:Reference this}}" 
-                            HeightRequest="220" 
-                            HorizontalScrollBarVisibility="Never">
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:ItemPop">
-                        <Border Margin="20,0,0,10" 
-                                WidthRequest="160" 
-                                StrokeShape="RoundRectangle 15" 
-                                StrokeThickness="0"
-                                BackgroundColor="#F5F5F5">
-                            <Border.Shadow>
-                                <Shadow Brush="Black" Offset="0,2" Opacity="0.1" Radius="5" />
-                            </Border.Shadow>
-                            
-                            <Grid RowDefinitions="150, Auto">
-                                <Image Source="{Binding ImagenUrl}" 
-                                       Aspect="AspectFill" 
-                                       Grid.Row="0" />
-                                
-                                <Label Text="{Binding Nombre}" 
-                                       Grid.Row="1" 
-                                       HorizontalOptions="Center" 
-                                       FontAttributes="Bold" 
-                                       Margin="5" 
-                                       TextColor="#333" 
-                                       MaxLines="1"
-                                       LineBreakMode="TailTruncation"/>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </VerticalStackLayout>
+            <VerticalStackLayout Grid.Row="0" Spacing="10">
+                <Label Text="Novedades" 
+                       FontSize="24" 
+                       FontAttributes="Bold" 
+                       Margin="20,0" 
+                       TextColor="Black" />
 
-        <Grid Grid.Row="1" RowDefinitions="Auto, *">
-            <Label Text="Explorar todo" 
-                   FontSize="24" 
-                   FontAttributes="Bold" 
-                   Margin="20,10,20,10" 
-                   TextColor="Black" />
+                <CollectionView ItemsSource="{Binding Novedades, Source={x:Reference this}}" 
+                                HeightRequest="220" 
+                                HorizontalScrollBarVisibility="Never">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ItemPop">
+                            <Border Margin="20,0,0,10" 
+                                    WidthRequest="160" 
+                                    StrokeShape="RoundRectangle 15" 
+                                    StrokeThickness="0"
+                                    BackgroundColor="#F5F5F5">
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Offset="0,2" Opacity="0.1" Radius="5" />
+                                </Border.Shadow>
 
-            <CollectionView Grid.Row="1" 
-                            ItemsSource="{Binding MasPopulares, Source={x:Reference this}}" 
-                            SelectionMode="Single"
-                            SelectionChanged="OnProductoSeleccionado"
-                            VerticalScrollBarVisibility="Never"
-                            Margin="10,0">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" 
-                                     Span="2" 
-                                     HorizontalItemSpacing="10" 
-                                     VerticalItemSpacing="15" />
-                </CollectionView.ItemsLayout>
+                                <Grid RowDefinitions="150, Auto">
+                                    <Image Source="{Binding ImagenUrl}" 
+                                           Aspect="AspectFill" 
+                                           Grid.Row="0" />
 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:ItemPop">
-                        <Border BackgroundColor="White" 
-                                StrokeShape="RoundRectangle 12" 
-                                StrokeThickness="1" 
-                                Stroke="#F0F0F0">
-                            <Grid RowDefinitions="160, Auto, Auto" Padding="0,0,0,10">
-                                <Image Source="{Binding ImagenUrl}" 
-                                       Aspect="AspectFill" 
-                                       Grid.Row="0" 
-                                       HeightRequest="160" />
-                                
-                                <Label Text="{Binding Nombre}" 
-                                       Grid.Row="1" 
-                                       FontAttributes="Bold" 
-                                       Margin="10,8,10,0" 
-                                       TextColor="#444" 
-                                       MaxLines="1"
-                                       LineBreakMode="TailTruncation" />
-                                
-                                <Label Text="{Binding Precio, StringFormat='{0:F2} €'}" 
-                                       Grid.Row="2" 
-                                       Margin="10,2,10,0" 
-                                       TextColor="#2ecc71" 
-                                       FontSize="16"
-                                       FontAttributes="Bold" />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
+                                    <Label Text="{Binding Nombre}" 
+                                           Grid.Row="1" 
+                                           HorizontalOptions="Center" 
+                                           FontAttributes="Bold" 
+                                           Margin="5" 
+                                           TextColor="#333" 
+                                           MaxLines="1"
+                                           LineBreakMode="TailTruncation"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
 
-                <CollectionView.Footer>
-                    <Grid HeightRequest="50" BackgroundColor="Transparent" />
-                </CollectionView.Footer>
-            </CollectionView>
+            <Grid Grid.Row="1" RowDefinitions="Auto, *">
+                <Label Text="Explorar todo" 
+                       FontSize="24" 
+                       FontAttributes="Bold" 
+                       Margin="20,10,20,10" 
+                       TextColor="Black" />
+
+                <CollectionView Grid.Row="1" 
+                                ItemsSource="{Binding MasPopulares, Source={x:Reference this}}" 
+                                SelectionMode="Single"
+                                SelectionChanged="OnProductoSeleccionado"
+                                VerticalScrollBarVisibility="Never"
+                                Margin="10,0">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" 
+                                         Span="2" 
+                                         HorizontalItemSpacing="10" 
+                                         VerticalItemSpacing="15" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ItemPop">
+                            <Border BackgroundColor="White" 
+                                    StrokeShape="RoundRectangle 12" 
+                                    StrokeThickness="1" 
+                                    Stroke="#F0F0F0">
+                                <Grid RowDefinitions="160, Auto, Auto" Padding="0,0,0,10">
+                                    <Image Source="{Binding ImagenUrl}" 
+                                           Aspect="AspectFill" 
+                                           Grid.Row="0" 
+                                           HeightRequest="160" />
+
+                                    <Label Text="{Binding Nombre}" 
+                                           Grid.Row="1" 
+                                           FontAttributes="Bold" 
+                                           Margin="10,8,10,0" 
+                                           TextColor="#444" 
+                                           MaxLines="1"
+                                           LineBreakMode="TailTruncation" />
+
+                                    <Label Text="{Binding Precio, StringFormat='{0:F2} €'}" 
+                                           Grid.Row="2" 
+                                           Margin="10,2,10,0" 
+                                           TextColor="#2ecc71" 
+                                           FontSize="16"
+                                           FontAttributes="Bold" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                    <CollectionView.Footer>
+                        <Grid HeightRequest="80" BackgroundColor="Transparent" />
+                    </CollectionView.Footer>
+                </CollectionView>
+            </Grid>
         </Grid>
-    </Grid>
+    </RefreshView>
 </ContentView>

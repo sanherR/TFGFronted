@@ -13,16 +13,16 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
     private Stream _imagenStream;
     private string _nombreArchivo;
 
-    // Comandos
+    // Comandos para los botones del XAML
     public ICommand GuardarCommand { get; }
     public ICommand CambiarImagenCommand { get; }
 
-    // Propiedades vinculadas al XAML
+    // Propiedades vinculadas al XAML (Bindings)
     public string Nombre { get; set; }
     public string Descripcion { get; set; }
     public decimal Precio { get; set; }
     public int categoriaId { get; set; }
-    public string Estado_producto { get; set; }
+    public string Estado_producto { get; set; } // Lo usamos para el Binding del Picker
     public string Caracteristicas { get; set; }
 
     private ImageSource _imagenPreview;
@@ -33,30 +33,31 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
     }
 
     public EditarProductoPage(Producto producto)
-{
-    InitializeComponent();
-    _producto = producto;
+    {
+        InitializeComponent();
+        _producto = producto;
 
-    Nombre = producto.Nombre;
-    Descripcion = producto.Descripcion;
-    Precio = producto.Precio;
-    
-    // Si da rojo, prueba a poner producto.categoria_id (en minúsculas)
-    categoriaId = producto.categoria_id; 
-    
-    // Si estos dan rojo, es que NO existen en tu clase Producto.cs todavía
-    Estado_producto = producto.Estado ?? "Nuevo"; 
-    Caracteristicas = producto.Caracteristicas ?? "";
-    
-    ImagenPreview = producto.ImagenUrl;
+        // Cargamos los datos del objeto producto en las propiedades de la página
+        Nombre = producto.Nombre;
+        Descripcion = producto.Descripcion;
+        Precio = producto.Precio;
+        categoriaId = producto.categoria_id;
+        
+        // Mapeamos desde tu modelo Producto.cs
+        Estado_producto = producto.Estado ?? "Nuevo"; 
+        Caracteristicas = producto.Caracteristicas ?? "";
+        
+        // Imagen actual
+        ImagenPreview = producto.ImagenUrl;
 
-    GuardarCommand = new Command(async () => await Guardar());
-    CambiarImagenCommand = new Command(async () => await SeleccionarImagen());
+        // Inicializamos los comandos
+        GuardarCommand = new Command(async () => await Guardar());
+        CambiarImagenCommand = new Command(async () => await SeleccionarImagen());
 
-    BindingContext = this;
-}
+        // Establecemos el contexto de datos para que el XAML funcione
+        BindingContext = this;
+    }
 
-    // Este método se ejecuta al entrar para rellenar los Pickers
     protected override async void OnAppearing()
     {
         base.OnAppearing();
@@ -64,47 +65,56 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
     }
 
     private async Task CargarDatosIniciales()
+    {
+        try 
+        {
+            // 1. Cargamos las categorías del servidor para el Picker
+            var listaCategorias = await _apiService.ObtenerCategorias();
+            if (listaCategorias != null && CategoriaPicker != null) 
+            {
+                CategoriaPicker.ItemsSource = listaCategorias;
+                
+                // Seleccionamos automáticamente la categoría actual del producto
+                var seleccionada = listaCategorias.FirstOrDefault(c => c.Id == categoriaId);
+                if (seleccionada != null)
+                {
+                    CategoriaPicker.SelectedItem = seleccionada;
+                }
+            }
+
+            // 2. Seleccionamos el estado actual en el Picker de estados
+            if (EstadoPicker != null && !string.IsNullOrEmpty(Estado_producto))
+            {
+                EstadoPicker.SelectedItem = Estado_producto;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("Error cargando datos: " + ex.Message);
+        }
+    }
+
+   private async Task Guardar()
 {
     try 
     {
-        var listaCategorias = await _apiService.ObtenerCategorias();
-        if (listaCategorias != null && CategoriaPicker != null) 
-        {
-            CategoriaPicker.ItemsSource = listaCategorias;
-            
-            // Esto selecciona la categoría que ya tenía el producto
-            var seleccionada = listaCategorias.FirstOrDefault(c => c.Id == categoriaId);
-            if (seleccionada != null)
-            {
-                CategoriaPicker.SelectedItem = seleccionada;
-            }
-        }
+        // 1. Forzamos el ID desde el objeto original para asegurar que no sea 0
+        int idProducto = _producto.Id; 
 
-        if (EstadoPicker != null && !string.IsNullOrEmpty(Estado_producto))
-        {
-            EstadoPicker.SelectedItem = Estado_producto;
-        }
-    }
-    catch (Exception ex)
-    {
-        System.Diagnostics.Debug.WriteLine("Error cargando pickers: " + ex.Message);
-    }
-}
+        // 2. Convertimos el precio a int (ya que tu modelo Producto lo tiene como int)
+        // Usamos Math.Round para no perder decimales por el camino
+        int precioFinal = (int)Math.Round(Precio);
 
-    private async Task Guardar()
-    {
-        // Recogemos la categoría seleccionada del Picker
         var catSeleccionada = (Categoria)CategoriaPicker.SelectedItem;
         int idFinalCat = catSeleccionada?.Id ?? categoriaId;
-
-        // Recogemos el estado seleccionado del Picker
         string estadoFinal = EstadoPicker.SelectedItem?.ToString() ?? Estado_producto;
 
+        // 3. Llamada a la API
         var success = await _apiService.ActualizarProducto(
             _producto.Id,
             Nombre,
             Descripcion,
-            Precio,
+            precioFinal, // Enviamos como int
             idFinalCat,
             _imagenStream,
             _nombreArchivo,
@@ -113,35 +123,47 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
 
         if (success)
         {
-            await DisplayAlert("Éxito", "Producto actualizado correctamente", "OK");
+            await DisplayAlert("Éxito", "Producto actualizado", "OK");
             MessagingCenter.Send<App>((App)Application.Current, "ActualizarPerfil");
             await Navigation.PopAsync();
         }
         else
         {
-            await DisplayAlert("Error", "No se pudo actualizar el producto. Revisa los datos.", "OK");
+            await DisplayAlert("Error", "Servidor: Producto no encontrado. Verifica el ID.", "OK");
         }
     }
+    catch (Exception ex)
+    {
+        await DisplayAlert("Error", "Fallo al guardar: " + ex.Message, "OK");
+    }
+}
 
     private async Task SeleccionarImagen()
     {
-        var result = await FilePicker.PickAsync(new PickOptions
+        try
         {
-            PickerTitle = "Selecciona una imagen",
-            FileTypes = FilePickerFileType.Images
-        });
+            var result = await FilePicker.PickAsync(new PickOptions
+            {
+                PickerTitle = "Selecciona una nueva imagen",
+                FileTypes = FilePickerFileType.Images
+            });
 
-        if (result != null)
+            if (result != null)
+            {
+                _imagenStream = await result.OpenReadAsync();
+                _nombreArchivo = result.FileName;
+                
+                // Cambiamos la vista previa en la pantalla
+                ImagenPreview = ImageSource.FromStream(() => _imagenStream);
+            }
+        }
+        catch (Exception ex)
         {
-            _imagenStream = await result.OpenReadAsync();
-            _nombreArchivo = result.FileName;
-            
-            ImagenPreview = ImageSource.FromStream(() => _imagenStream);
-            await DisplayAlert("Imagen", "Imagen seleccionada correctamente", "OK");
+            await DisplayAlert("Error", "No se pudo cargar la imagen: " + ex.Message, "OK");
         }
     }
 
-    // Para que la imagen se refresque en la pantalla
+    // Lógica para notificar cambios a la interfaz (UI)
     public event PropertyChangedEventHandler PropertyChanged;
     protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {

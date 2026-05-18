@@ -88,59 +88,44 @@ public async Task<bool> CrearProducto(
     }
 }
     // --- ACTUALIZAR PRODUCTO (SIN CARACTERÍSTICAS NI ESTADO) ---
-  public async Task<bool> ActualizarProducto(
-    int id,
-    string nombre,
-    string descripcion,
-    decimal precio,
-    int categoriaId,
-    Stream imagen,
-    string nombreArchivo,
-    string estado,          // <--- NUEVO: ahora lo recibe por parámetro
-    string caracteristicas  // <--- NUEVO: ahora lo recibe por parámetro
-)
+  public async Task<bool> ActualizarProducto(int id, string nombre, string descripcion, decimal precio, int categoriaId, Stream archivoStream, string nombreArchivo, string estado, string caracteristicas)
 {
-    try 
+    try
     {
-        var token = Preferences.Get("token", "");
-        var request = new HttpRequestMessage(HttpMethod.Put, $"api/productos/{id}");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
-
+        AplicarToken();
         var content = new MultipartFormDataContent();
-        
-        // Datos básicos
-        content.Add(new StringContent(id.ToString()), "Id"); 
-        content.Add(new StringContent(nombre ?? ""), "Nombre");
-        content.Add(new StringContent(descripcion ?? ""), "Descripcion");
-        content.Add(new StringContent(precio.ToString(System.Globalization.CultureInfo.InvariantCulture)), "Precio");
-        content.Add(new StringContent(categoriaId.ToString()), "CategoriaId");
-        
-        // 🔥 AHORA ENVIAMOS LOS DATOS REALES QUE VIENEN DE LA PÁGINA
-        content.Add(new StringContent(caracteristicas ?? "Sin especificar"), "Caracteristicas");
-        content.Add(new StringContent(estado ?? "Nuevo"), "Estado_Producto");
 
-        // Imagen
-        if (imagen != null && imagen.Length > 0)
+        // IMPORTANTE: Estos nombres deben coincidir EXACTAMENTE con las 
+        // propiedades de tu clase Producto.cs del BACKEND
+        content.Add(new StringContent(id.ToString()), "Id"); 
+        content.Add(new StringContent(nombre), "Nombre");
+        content.Add(new StringContent(descripcion ?? ""), "Descripcion");
+        content.Add(new StringContent(precio.ToString(CultureInfo.InvariantCulture)), "Precio");
+        content.Add(new StringContent(categoriaId.ToString()), "CategoriaId"); // <-- Antes era categoria_id
+        content.Add(new StringContent(estado ?? "Nuevo"), "Estado_producto");
+        content.Add(new StringContent(caracteristicas ?? ""), "Caracteristicas");
+
+        if (archivoStream != null && !string.IsNullOrEmpty(nombreArchivo))
         {
-            var fileContent = new StreamContent(imagen);
-            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
-            content.Add(fileContent, "Imagen", nombreArchivo ?? "foto.jpg");
+            var imageContent = new StreamContent(archivoStream);
+            imageContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+            content.Add(imageContent, "ImagenFile", nombreArchivo); // Asegúrate si en el back se llama ImagenFile o ImagenUrl
         }
 
-        request.Content = content;
-        var response = await _httpClient.SendAsync(request);
+        // La URL debe ser exacta: api/productos/5
+        var response = await _httpClient.PutAsync($"api/productos/{id}", content);
         
         if (!response.IsSuccessStatusCode)
         {
-            var errorBody = await response.Content.ReadAsStringAsync();
-            System.Diagnostics.Debug.WriteLine($"!!!! ERROR SERVER: {errorBody}");
+            var error = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"❌ Error Servidor ({response.StatusCode}): {error}");
         }
 
         return response.IsSuccessStatusCode;
     }
     catch (Exception ex)
     {
-        System.Diagnostics.Debug.WriteLine("!!!! FALLO CONEXIÓN: " + ex.Message);
+        Debug.WriteLine($"❌ Error Crítico: {ex.Message}");
         return false;
     }
 }
@@ -490,6 +475,48 @@ public async Task<bool> AceptarReservaProducto(int productoId, int compradorId)
     catch (Exception ex)
     {
         Debug.WriteLine($"❌ Error al aceptar reserva: {ex.Message}");
+        return false;
+    }
+}
+public async Task<bool> CancelarReservaProducto(int productoId)
+{
+    try
+    {
+        AplicarToken(); // Aseguramos que enviamos quién eres al servidor
+
+        // Usamos PutAsync porque vamos a "editar" el estado del producto
+        var response = await _httpClient.PutAsync($"api/productos/{productoId}/cancelar-reserva", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+        else
+        {
+            // Esto nos dirá en la consola de Visual Studio si el error es 404, 500, etc.
+            string errorDetallado = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"❌ Error API al cancelar ({response.StatusCode}): {errorDetallado}");
+            return false;
+        }
+    }
+    catch (Exception ex)
+    {
+        Debug.WriteLine($"❌ Error de red al cancelar: {ex.Message}");
+        return false;
+    }
+}
+public async Task<bool> ConfirmarVentaProducto(int productoId)
+{
+    try
+    {
+        AplicarToken();
+        // Llamamos a la nueva ruta que acabamos de crear en el backend
+        var response = await _httpClient.PutAsync($"api/productos/{productoId}/confirmar-venta", null);
+        return response.IsSuccessStatusCode;
+    }
+    catch (Exception ex)
+    {
+        Debug.WriteLine($"❌ Error al confirmar venta: {ex.Message}");
         return false;
     }
 }

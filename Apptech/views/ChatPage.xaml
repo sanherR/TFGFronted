@@ -15,18 +15,54 @@
                 <Border Grid.Column="0" StrokeShape="RoundRectangle 8" HeightRequest="50" WidthRequest="50">
                     <Image Source="{Binding ImagenProducto}" Aspect="AspectFill"/>
                 </Border>
+                
                 <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
                     <Label Text="{Binding NombreProducto}" FontAttributes="Bold" MaxLines="1" TextColor="Black"/>
                     <Label Text="{Binding PrecioProducto, StringFormat='{0} €'}" TextColor="#2ecc71" FontAttributes="Bold"/>
                 </VerticalStackLayout>
-                <Button x:Name="BotonReservar" 
-        Grid.Column="2" 
-        Text="Reservar" 
-        Clicked="OnReservarClicked"
-        BackgroundColor="#3498db" 
-        TextColor="White" 
-        CornerRadius="15" 
-        HeightRequest="35"/>
+
+                <StackLayout Grid.Column="2" VerticalOptions="Center">
+                    
+                    <Button x:Name="BotonReservar" 
+                            Text="Reservar" 
+                            Clicked="OnReservarClicked"
+                            BackgroundColor="#3498db" 
+                            TextColor="White" 
+                            CornerRadius="15" 
+                            HeightRequest="35"
+                            IsVisible="True"/>
+
+                    <Grid x:Name="GridAccionesVendedor" 
+                          ColumnDefinitions="Auto, Auto" 
+                          ColumnSpacing="5" 
+                          IsVisible="False">
+                        
+                        <Button Grid.Column="0"
+                                Text="Vender" 
+                                Clicked="OnConfirmarVentaClicked"
+                                BackgroundColor="#2ecc71" 
+                                TextColor="White" 
+                                CornerRadius="15" 
+                                HeightRequest="35"
+                                Padding="10,0"/>
+
+                        <Button Grid.Column="1"
+                                Text="Anular" 
+                                Clicked="OnReservarClicked"
+                                BackgroundColor="#e74c3c" 
+                                TextColor="White" 
+                                CornerRadius="15" 
+                                HeightRequest="35"
+                                Padding="10,0"/>
+                    </Grid>
+
+                    <Label x:Name="LabelVendido" 
+                           Text="Vendido" 
+                           TextColor="Gray" 
+                           FontAttributes="Bold" 
+                           IsVisible="False"
+                           HorizontalOptions="Center"/>
+                </StackLayout>
             </Grid>
         </Border>
         
