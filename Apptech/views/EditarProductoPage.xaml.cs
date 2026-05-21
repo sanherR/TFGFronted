@@ -98,28 +98,30 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
 {
     try 
     {
-        // 1. Forzamos el ID desde el objeto original para asegurar que no sea 0
-        int idProducto = _producto.Id; 
+        // 1. EXTRAEMOS EL ID REAL (Prueba con id_producto que es como viene del JSON del Back)
+        int idFinalProducto = _producto.Id; 
 
-        // 2. Convertimos el precio a int (ya que tu modelo Producto lo tiene como int)
-        // Usamos Math.Round para no perder decimales por el camino
+        // Si tu objeto en la App usa la propiedad "Id" con mayúscula pero venía vacía,
+        // asegúrate de verificar cómo se llama en tu modelo 'Producto' del móvil.
+        // Si tu modelo en la app usa 'id_producto', mándale '_producto.id_producto'.
+
         int precioFinal = (int)Math.Round(Precio);
 
         var catSeleccionada = (Categoria)CategoriaPicker.SelectedItem;
         int idFinalCat = catSeleccionada?.Id ?? categoriaId;
         string estadoFinal = EstadoPicker.SelectedItem?.ToString() ?? Estado_producto;
 
-        // 3. Llamada a la API
+        // 3. Llamada a la API pasándole el ID que toca
         var success = await _apiService.ActualizarProducto(
-            _producto.Id,
-            Nombre,
-            Descripcion,
-            precioFinal, // Enviamos como int
-            idFinalCat,
-            _imagenStream,
-            _nombreArchivo,
-            estadoFinal,
-            Caracteristicas);
+    _producto.Id, // Manda la propiedad del ID directo
+    Nombre,
+    Descripcion,
+    precioFinal,
+    idFinalCat,
+    _imagenStream,
+    _nombreArchivo,
+    estadoFinal,
+    Caracteristicas);
 
         if (success)
         {
@@ -129,7 +131,8 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
         }
         else
         {
-            await DisplayAlert("Error", "Servidor: Producto no encontrado. Verifica el ID.", "OK");
+            // Modificamos el alert para que en la pantalla te diga qué ID está enviando el móvil
+            await DisplayAlert("Error", $"Servidor: Producto no encontrado. El móvil envió el ID: {idFinalProducto}", "OK");
         }
     }
     catch (Exception ex)

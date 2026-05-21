@@ -218,17 +218,25 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
     }
 
     private async Task EliminarProducto(Producto producto)
-    {
-        bool confirm = await Application.Current.MainPage.DisplayAlert("Eliminar", "¿Estás seguro?", "Sí", "No");
-        if (!confirm) return;
+{
+    bool confirm = await Application.Current.MainPage.DisplayAlert("Eliminar", "¿Estás seguro?", "Sí", "No");
+    if (!confirm) return;
 
-        var success = await _apiService.EliminarProducto(producto.Id);
-        if (success)
-        {
-            Productos.Remove(producto);
-            // Si los favoritos o items activos lo contienen, se refrescará por el binding
-        }
+    var success = await _apiService.EliminarProducto(producto.Id);
+    if (success)
+    {
+        // 1. Borramos de la lista general
+        if (Productos.Contains(producto)) Productos.Remove(producto);
+        
+        // 2. ¡CLAVE!: Borramos de la lista que la pantalla está renderizando realmente
+        if (ItemsActivos.Contains(producto)) ItemsActivos.Remove(producto);
+        
+        // 3. Avisamos a la MainPage de que este producto ya no existe
+        MessagingCenter.Send<App>((App)Application.Current, "ActualizarMainPage");
+        
+        await Application.Current.MainPage.DisplayAlert("Éxito", "Producto eliminado correctamente", "OK");
     }
+}
 
     protected void OnPropertyChanged([CallerMemberName] string name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

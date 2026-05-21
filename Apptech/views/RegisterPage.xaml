@@ -2,48 +2,105 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Apptech.views.RegisterPage"
-             Title="Crear Cuenta"
-             BackgroundColor="White">
+             Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="30" Spacing="20">
-            
-            <Image Source="logo_infomercado.png"
-                   HeightRequest="150"
-                   Aspect="AspectFit"
-                   HorizontalOptions="Center" />
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4A148C" Offset="0.0" />
+            <GradientStop Color="#29B6F6" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
 
-            <Label Text="REGISTRARSE"
-                   HorizontalTextAlignment="Center"
-                   FontSize="28"
-                   TextColor="#003366"
-                   FontAttributes="Bold" />
+    <Grid>
+        <ScrollView>
+            <Grid ColumnDefinitions="0.08*, 0.84*, 0.08*" 
+                  RowDefinitions="Auto, Auto, Auto"
+                  Padding="0, 30, 0, 30"
+                  VerticalOptions="Center">
 
-            <Border Stroke="#003366" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,0">
-                <Entry x:Name="txtUsuario" Placeholder="Nombre de usuario" />
-            </Border>
+                <Image Grid.Row="0" Grid.Column="1"
+                       Source="logo_infomercado.png"
+                       HeightRequest="120"
+                       Aspect="AspectFit"
+                       HorizontalOptions="Center"
+                       Margin="0,20,0,5" />
 
-            <Border Stroke="#003366" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,0">
-              <Entry x:Name="txtEmail" Placeholder="Correo" Keyboard="Email" />
-            </Border>
+                <Border Grid.Row="1" Grid.Column="1"
+                        BackgroundColor="#F8F9FA"
+                        Padding="24, 25, 24, 25"
+                        StrokeThickness="0"
+                        Margin="0,10,0,10">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="30" />
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="#000000" Offset="0,15" Radius="25" Opacity="0.25" />
+                    </Border.Shadow>
 
-            <Border Stroke="#003366" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,0">
-                <Entry x:Name="txtPassword" Placeholder="Contraseña" IsPassword="True" />
-            </Border>
+                    <VerticalStackLayout Spacing="18">
+                        
+                        <Label Text="CREAR CUENTA"
+                               FontSize="26"
+                               FontAttributes="Bold"
+                               TextColor="#212121"
+                               CharacterSpacing="1.5"
+                               HorizontalTextAlignment="Center"
+                               Margin="0,0,0,5" />
 
-            <Border Stroke="#003366" StrokeThickness="1" StrokeShape="RoundRectangle 10" Padding="10,0">
-                <Entry x:Name="txtConfirmPassword" Placeholder="Confirmar contraseña" IsPassword="True" />
-            </Border>
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Nombre de usuario" FontSize="13" FontAttributes="Bold" TextColor="#5E6E7C" Margin="4,0"/>
+                            <Border Stroke="#E0E6ED" StrokeThickness="1.5" StrokeShape="RoundRectangle 16" Padding="15,0" BackgroundColor="White">
+                                <Entry x:Name="txtUsuario" Placeholder="Tu nombre o nick" PlaceholderColor="#A0AAB5" TextColor="#2C3E50" HeightRequest="45" />
+                            </Border>
+                        </VerticalStackLayout>
 
-            <Button Text="CREAR CUENTA"
-                    Clicked="OnRegisterClicked"
-                    BackgroundColor="#003366"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    CornerRadius="10"
-                    HeightRequest="55"
-                    Margin="0,10,0,0" />
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Correo electrónico" FontSize="13" FontAttributes="Bold" TextColor="#5E6E7C" Margin="4,0"/>
+                            <Border Stroke="#E0E6ED" StrokeThickness="1.5" StrokeShape="RoundRectangle 16" Padding="15,0" BackgroundColor="White">
+                                <Entry x:Name="txtEmail" Placeholder="ejemplo@correo.com" PlaceholderColor="#A0AAB5" TextColor="#2C3E50" HeightRequest="45" Keyboard="Email" />
+                            </Border>
+                        </VerticalStackLayout>
 
-        </VerticalStackLayout> 
-    </ScrollView>
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Contraseña" FontSize="13" FontAttributes="Bold" TextColor="#5E6E7C" Margin="4,0"/>
+                            <Border Stroke="#E0E6ED" StrokeThickness="1.5" StrokeShape="RoundRectangle 16" Padding="15,0" BackgroundColor="White">
+                                <Entry x:Name="txtPassword" Placeholder="******" PlaceholderColor="#A0AAB5" TextColor="#2C3E50" IsPassword="True" HeightRequest="45" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Confirmar contraseña" FontSize="13" FontAttributes="Bold" TextColor="#5E6E7C" Margin="4,0"/>
+                            <Border Stroke="#E0E6ED" StrokeThickness="1.5" StrokeShape="RoundRectangle 16" Padding="15,0" BackgroundColor="White">
+                                <Entry x:Name="txtConfirmPassword" Placeholder="******" PlaceholderColor="#A0AAB5" TextColor="#2C3E50" IsPassword="True" HeightRequest="45" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Button Clicked="OnRegisterClicked" Text="REGISTRARME" TextColor="White" FontAttributes="Bold" FontSize="15" CharacterSpacing="1" BackgroundColor="#4A148C" HeightRequest="55" CornerRadius="18" Margin="0,10,0,0" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Grid.Row="2" Grid.Column="1" HorizontalOptions="Center" FontSize="14" Margin="0,10,0,0">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="¿Ya tienes cuenta? " TextColor="#E0F7FA" />
+                            <Span Text="Inicia sesión" TextColor="White" FontAttributes="Bold" TextDecorations="Underline">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnVolverAlLoginTextoTapped"/>
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+            </Grid>
+        </ScrollView>
+
+        <ImageButton Source="abc_ic_ab_back_material.png"
+                     HorizontalOptions="Start"
+                     VerticalOptions="Start"
+                     Margin="20, 20, 0, 0"
+                     HeightRequest="35"
+                     WidthRequest="35"
+                     Padding="5"
+                     Clicked="OnVolverAlLoginTapped" /> </Grid>
 </ContentPage>

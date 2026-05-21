@@ -12,6 +12,7 @@ public partial class LoginPage : ContentPage
     public LoginPage()
     {
         InitializeComponent();
+        
     }
 
     private async void OnRegisterTapped2(object sender, EventArgs e)

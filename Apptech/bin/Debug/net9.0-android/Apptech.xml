@@ -4,6 +4,21 @@
         <name>Apptech</name>
     </assembly>
     <members>
+        <member name="M:Apptech.views.RegisterPage.OnRegisterClicked(System.Object,System.EventArgs)">
+            <summary>
+            Gestiona el registro del nuevo usuario contra la API
+            </summary>
+        </member>
+        <member name="M:Apptech.views.RegisterPage.OnVolverAlLoginTapped(System.Object,System.EventArgs)">
+            <summary>
+            Cierra la pantalla actual al pulsar la flecha superior (ImageButton)
+            </summary>
+        </member>
+        <member name="M:Apptech.views.RegisterPage.OnVolverAlLoginTextoTapped(System.Object,Microsoft.Maui.Controls.TappedEventArgs)">
+            <summary>
+            Cierra la pantalla actual al pulsar el texto inferior (TapGestureRecognizer)
+            </summary>
+        </member>
         <member name="T:Apptech.Resource">
             <summary>
             Android Resource Designer class.

@@ -6,11 +6,11 @@ namespace Apptech.Models
     {
         public int Id { get; set; }
         
-        public string TituloChat { get; set; }
+        public string TituloChat { get; set; } 
         
-        public string UltimoMensaje { get; set; }
+        public string UltimoMensaje { get; set; } 
         
-        public string ImagenProductoUrl { get; set; }
+        public string ImagenProductoUrl { get; set; } 
 
         // Con esto le decimos: "Busca en el JSON algo que se llame productoId o id_producto"
         [JsonPropertyName("productoId")]

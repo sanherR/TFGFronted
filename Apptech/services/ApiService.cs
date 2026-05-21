@@ -247,19 +247,27 @@ return System.Text.Json.JsonSerializer.Deserialize<LoginResponse>(json, _jsonOpt
 }
 
     public async Task<bool> EliminarProducto(int id)
-    {   
-        try {
-            var token = Preferences.Get("token", "");
+{
+    try
+    {
+        AplicarToken(); // Asegúrate de adjuntar el token para pasar el [Authorize] del back
+        
+        var response = await _httpClient.DeleteAsync($"api/productos/{id}");
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"❌ Error al eliminar ({response.StatusCode}): {error}");
+        }
 
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"api/productos/{id}");
-
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
-
-            var response = await _httpClient.SendAsync(request);
-
-            return response.IsSuccessStatusCode;
-        } catch { return false; }
+        return response.IsSuccessStatusCode;
     }
+    catch (Exception ex)
+    {
+        Debug.WriteLine($"❌ Error Crítico al eliminar: {ex.Message}");
+        return false;
+    }
+}
 
     public async Task<string> SubirImagenPerfil(Stream archivoStream, string nombreArchivoOriginal, string token)
     {
