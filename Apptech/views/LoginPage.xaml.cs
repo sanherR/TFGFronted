@@ -25,7 +25,7 @@ public partial class LoginPage : ContentPage
 
         try 
         {
-            // Intentamos el login
+            
             var user = await _apiService.Login(txtEmail.Text, txtPassword.Text);
 
             if (user != null)
@@ -34,7 +34,7 @@ public partial class LoginPage : ContentPage
 
                 // GUARDADO DE DATOS (Ajustado para que ApiService.cs los encuentre)
                 Preferences.Set("token", user.Token);
-                Preferences.Set("userId", user.UsuarioId); // 'userId' coincide con ApiService.cs
+                Preferences.Set("userId", user.UsuarioId); 
                 Preferences.Set("user_name", user.Nombre);
 
                 // Navegamos a la MainPage
@@ -52,7 +52,7 @@ public partial class LoginPage : ContentPage
         }
         finally 
         {
-            // Siempre restauramos el botón, pase lo que pase
+            
             boton.IsEnabled = true;
             boton.Text = "INICIAR SESIÓN";
         }

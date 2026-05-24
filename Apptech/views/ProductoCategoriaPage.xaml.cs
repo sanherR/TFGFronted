@@ -73,7 +73,7 @@ public partial class ProductoCategoriaPage : ContentPage, INotifyPropertyChanged
                     Caracteristicas = p.Caracteristicas,
                     ImagenUrlBase = p.ImagenUrl.StartsWith("http") ? p.ImagenUrl : $"https://tfgbacken-production.up.railway.app{p.ImagenUrl}",
                     
-                    // USAMOS EL NOMBRE EXACTO DE TU ITEMPOP: Vendido
+                    
                     Vendido = p.Vendido 
                 }).ToList();
             }
@@ -162,8 +162,7 @@ public partial class ProductoCategoriaPage : ContentPage, INotifyPropertyChanged
             Sugerencias.Clear();
             OnPropertyChanged(nameof(MostrarSugerencias));
 
-            // NAVEGACIÓN DIRECTA CON EL ITEMPOP
-            // Esto elimina el error de la captura porque enviamos el tipo correcto.
+            
             await Navigation.PushAsync(new DetalleProductoPage(item));
         }
         catch (Exception ex)

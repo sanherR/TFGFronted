@@ -15,13 +15,13 @@ namespace Apptech.Models
         // Comparamos el EmisorId con el ID del usuario logueado en Preferences
         public bool EsMio => EmisorId == Preferences.Get("userId", 0);
 
-        // Estas propiedades las usaremos en el Binding del XAML
+        
         public LayoutOptions Alineacion => EsMio ? LayoutOptions.End : LayoutOptions.Start;
         
-        // Colores: Verde clarito para ti, gris claro para el otro
+        
         public Color ColorBurbuja => EsMio ? Color.FromArgb("#DCF8C6") : Color.FromArgb("#E9E9EB");
         
-        // Alineación del texto dentro de la burbuja
+        
         public TextAlignment AlineacionTexto => EsMio ? TextAlignment.End : TextAlignment.Start;
     }
 }

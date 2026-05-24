@@ -8,11 +8,9 @@ namespace Apptech.Models
         public int ProductoId { get; set; }
         public string? TituloChat { get; set; }
         public string? UltimoMensaje { get; set; }
-
-        // Esta propiedad es la que viene de la API
         public string? ImagenProductoUrl { get; set; }
 
-        // --- LÓGICA DE IMAGEN CENTRALIZADA ---
+        
         [System.Text.Json.Serialization.JsonIgnore]
         public string ImagenUrl 
         { 
@@ -23,7 +21,7 @@ namespace Apptech.Models
                 return $"https://tfgbacken-production.up.railway.app{ImagenProductoUrl}";
             }
         }
-        // ------------------------------------
+        
 
         public ItemPop? Producto { get; set; } 
     }

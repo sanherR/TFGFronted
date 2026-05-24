@@ -9,7 +9,7 @@ public class MainSelector : DataTemplateSelector
 
     protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
     {
-        // Añadimos un log para ver qué llega cuando se congela
+        
         System.Diagnostics.Debug.WriteLine($"Selector recibiendo: {item ?? "NULO"}");
 
         // Convertimos a string por si acaso llega un objeto
@@ -21,8 +21,7 @@ public class MainSelector : DataTemplateSelector
             "Categorias" => ProductosCategoriaTemplate,
             "Chat" => ChatTemplate,
             "Perfil" => PerfilTemplate,
-            // IMPORTANTE: Nunca devuelvas null. 
-            // Si no sabe qué es, que devuelva la página principal por defecto.
+            
             _ => ProductosTemplate 
         };
     } 

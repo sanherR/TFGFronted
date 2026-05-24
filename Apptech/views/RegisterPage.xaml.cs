@@ -13,9 +13,7 @@ public partial class RegisterPage : ContentPage
         InitializeComponent();
     }
 
-    /// <summary>
-    /// Gestiona el registro del nuevo usuario contra la API
-    /// </summary>
+   
     private async void OnRegisterClicked(object sender, EventArgs e)
     {
         var boton = (Button)sender;
@@ -66,24 +64,19 @@ public partial class RegisterPage : ContentPage
         }
         finally
         {
-            // Nos aseguramos de restaurar el botón pase lo que pase
+            
             boton.IsEnabled = true;
             boton.Text = "REGISTRARME";
         }
     }
 
-    /// <summary>
-    /// Cierra la pantalla actual al pulsar la flecha superior (ImageButton)
-    /// </summary>
+   
     private async void OnVolverAlLoginTapped(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
     }
 
-    /// <summary>
-    /// Cierra la pantalla actual al pulsar el texto inferior (TapGestureRecognizer)
-    /// </summary>
-    private async void OnVolverAlLoginTextoTapped(object sender, TappedEventArgs e)
+       private async void OnVolverAlLoginTextoTapped(object sender, TappedEventArgs e)
     {
         await Navigation.PopAsync();
     }

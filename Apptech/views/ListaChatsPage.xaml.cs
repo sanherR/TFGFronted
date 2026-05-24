@@ -8,7 +8,7 @@ namespace Apptech.views;
 public partial class ListaChatsPage : ContentPage
 {
     private readonly ApiService _apiService = new ApiService();
-    // Definimos la base aquí para reutilizarla
+    
     private readonly string baseUrl = "https://tfgbacken-production.up.railway.app";
     
     public ObservableCollection<ChatBandeja> MisChats { get; set; } = new ObservableCollection<ChatBandeja>();
@@ -39,14 +39,13 @@ public partial class ListaChatsPage : ContentPage
                 MisChats.Clear();
                 foreach (var chat in chats)
                 {
-                    // 1. Arreglamos la URL de la imagen
+                    
                     if (!string.IsNullOrEmpty(chat.ImagenProductoUrl) && !chat.ImagenProductoUrl.StartsWith("http"))
                     {
                         chat.ImagenProductoUrl = $"{baseUrl}/{chat.ImagenProductoUrl.TrimStart('/')}";
                     }
 
-                    // Nota: Si el backend envía NombreProducto y NombreUsuario, 
-                    // esta línea ya los incluye al añadir el objeto a la colección.
+                    
                     MisChats.Add(chat);
                 }
             });
@@ -62,12 +61,12 @@ public partial class ListaChatsPage : ContentPage
         var chatSeleccionado = e.CurrentSelection.FirstOrDefault() as ChatBandeja;
         if (chatSeleccionado == null) return;
 
-        // Deseleccionamos para que se pueda volver a clicar el mismo chat
+        
         ((CollectionView)sender).SelectedItem = null;
 
         try
         {
-            // Pasamos los datos al ChatPage
+            
             await Navigation.PushAsync(new ChatPage(
                 chatSeleccionado.Id, 
                 chatSeleccionado.TituloChat, 

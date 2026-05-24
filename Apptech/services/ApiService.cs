@@ -12,13 +12,12 @@ namespace Apptech.Services;
 public class ApiService
 {
     private readonly HttpClient _httpClient;
-    // Esto evita errores de mayúsculas/minúsculas al leer JSON
+    
     private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
     public ApiService()
     {
         _httpClient = new HttpClient();
-        // Usamos la IP mágica para emuladores
         _httpClient.BaseAddress = new Uri("https://tfgbacken-production.up.railway.app");
         _httpClient.Timeout = TimeSpan.FromSeconds(10); 
     }
@@ -33,7 +32,6 @@ public class ApiService
         }
     }
 
-    // --- CREAR PRODUCTO (ACTUALIZADO CON ESTADO Y CARACTERÍSTICAS) ---
 public async Task<bool> CrearProducto(
     string nombre, 
     string descripcion, 
@@ -42,8 +40,8 @@ public async Task<bool> CrearProducto(
     string nombreArchivoOriginal, 
     int usuarioId, 
     int categoriaId,
-    string estado,          // <-- Parámetro nuevo
-    string caracteristicas  // <-- Parámetro nuevo
+    string estado,          
+    string caracteristicas  
 )
 {
     try
@@ -56,7 +54,7 @@ public async Task<bool> CrearProducto(
         content.Add(new StringContent(nombre ?? ""), "nombre");
         content.Add(new StringContent(descripcion ?? ""), "descripcion");
         
-        // Ahora usamos las variables que vienen de la pantalla, no texto fijo
+    
         content.Add(new StringContent(caracteristicas ?? "Sin especificar"), "caracteristicas"); 
         content.Add(new StringContent(estado ?? "Nuevo"), "estado_producto");
 
@@ -92,7 +90,7 @@ public async Task<List<Producto>> ObtenerProductosVendidos(string token)
     try {
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
         
-        // Al usar GetFromJsonAsync, no necesitas hacer el Deserialize manualmente
+       
         var result = await _httpClient.GetFromJsonAsync<List<Producto>>("api/productos/vendidos");
         return result ?? new List<Producto>();
     } 
@@ -101,7 +99,7 @@ public async Task<List<Producto>> ObtenerProductosVendidos(string token)
         return new List<Producto>(); 
     }
 }
-    // --- ACTUALIZAR PRODUCTO (SIN CARACTERÍSTICAS NI ESTADO) ---
+    
   public async Task<bool> ActualizarProducto(int id, string nombre, string descripcion, decimal precio, int categoriaId, Stream archivoStream, string nombreArchivo, string estado, string caracteristicas)
 {
     try
@@ -109,8 +107,7 @@ public async Task<List<Producto>> ObtenerProductosVendidos(string token)
         AplicarToken();
         var content = new MultipartFormDataContent();
 
-        // IMPORTANTE: Estos nombres deben coincidir EXACTAMENTE con las 
-        // propiedades de tu clase Producto.cs del BACKEND
+        
         content.Add(new StringContent(id.ToString()), "Id"); 
         content.Add(new StringContent(nombre), "Nombre");
         content.Add(new StringContent(descripcion ?? ""), "Descripcion");
@@ -126,7 +123,7 @@ public async Task<List<Producto>> ObtenerProductosVendidos(string token)
             content.Add(imageContent, "ImagenFile", nombreArchivo); // Asegúrate si en el back se llama ImagenFile o ImagenUrl
         }
 
-        // La URL debe ser exacta: api/productos/5
+        
         var response = await _httpClient.PutAsync($"api/productos/{id}", content);
         
         if (!response.IsSuccessStatusCode)
@@ -153,17 +150,17 @@ public async Task<List<Producto>> ObtenerProductosVendidos(string token)
 {
     try 
     {
-        // 1. Hacemos la petición una sola vez
+        
         var response = await _httpClient.GetAsync("api/Productos");
         System.Diagnostics.Debug.WriteLine($"STATUS CODE: {response.StatusCode}");
         if (response.IsSuccessStatusCode)
         {
-            // 2. Leemos el contenido y lo transformamos directamente a ItemPop
+            
             var productos = await response.Content.ReadFromJsonAsync<List<ItemPop>>();
             return productos ?? new List<ItemPop>();
         }
         
-        // 3. Si falla, devolvemos una lista vacía de ItemPop (no de Producto)
+        
         return new List<ItemPop>();
     }
     catch (Exception ex)
@@ -195,14 +192,14 @@ public async Task<List<Producto>> ObtenerProductosVendidos(string token)
         
         if (!response.IsSuccessStatusCode) 
         {
-            // Opcional: ver por qué falla en la consola de VS Code
+           
             var error = await response.Content.ReadAsStringAsync();
             Debug.WriteLine($"!!!! LOGIN FALLIDO: {error}");
             return null;
         }
 
         var json = await response.Content.ReadAsStringAsync();
-        // Cambiamos <Usuario> por <LoginResponse>
+        
 return System.Text.Json.JsonSerializer.Deserialize<LoginResponse>(json, _jsonOptions);
     } 
     catch (Exception ex) 
@@ -224,14 +221,13 @@ return System.Text.Json.JsonSerializer.Deserialize<LoginResponse>(json, _jsonOpt
 {
     try
     {
-        // Asegúrate de que la URL coincide con tu API
+        
         var response = await _httpClient.GetAsync("api/Categorias");
         
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
-            // Esto convierte el JSON del servidor en una lista de C#
-            // Cambiamos JsonConvert por JsonSerializer
+            
             return System.Text.Json.JsonSerializer.Deserialize<List<Categoria>>(content, _jsonOptions);
         }
     }
@@ -239,13 +235,13 @@ return System.Text.Json.JsonSerializer.Deserialize<LoginResponse>(json, _jsonOpt
     {
         System.Diagnostics.Debug.WriteLine($"Error obteniendo categorías: {ex.Message}");
     }
-    return new List<Categoria>(); // Si falla, devuelve una lista vacía para no romper la app
+    return new List<Categoria>(); 
 }
     public async Task<Usuario> ObtenerPerfil(string token)
 {
     try 
     {
-        AplicarToken(); // <--- Aquí ya se pone el Bearer solo
+        AplicarToken(); 
         var response = await _httpClient.GetAsync("api/usuarios/perfil");
 
         if (!response.IsSuccessStatusCode) return null;
@@ -264,7 +260,7 @@ return System.Text.Json.JsonSerializer.Deserialize<LoginResponse>(json, _jsonOpt
 {
     try
     {
-        AplicarToken(); // Asegúrate de adjuntar el token para pasar el [Authorize] del back
+        AplicarToken(); 
         
         var response = await _httpClient.DeleteAsync($"api/productos/{id}");
         
@@ -308,10 +304,10 @@ public async Task<string> SubirImagenPerfil(Stream archivoStream, string nombreA
 
         if (response.IsSuccessStatusCode)
         {
-            // Leemos la respuesta como string
+            
             var json = await response.Content.ReadAsStringAsync();
             
-            // Usamos JsonDocument para extraer la propiedad "url" del JSON que envía tu backend
+            
             using var doc = JsonDocument.Parse(json);
             return doc.RootElement.GetProperty("url").GetString();
         }
@@ -360,14 +356,14 @@ public async Task<string> SubirImagenPerfil(Stream archivoStream, string nombreA
     new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
     ?? new List<Producto>();
     }
-    // Obtiene el ID del chat o lo crea si no existe
+    
 public async Task<int> ObtenerOCrearChat(int vendedorId, int productoId)
 {
     try
     {
         var compradorId = Preferences.Get("userId", 0);
         
-        // DEBUG para confirmar en consola que mandas 2 (vendedor) y 1 (tú)
+        
         Debug.WriteLine($" Mandando Vendedor: {vendedorId}, Comprador: {compradorId}, Producto: {productoId}");
 
         var datos = new { 
@@ -393,8 +389,7 @@ public async Task<int> ObtenerOCrearChat(int vendedorId, int productoId)
     return 0;
 }
 
-// Obtiene los mensajes de una conversación
-// 1. Obtener o crear el ID de la conversación
+
 public async Task<int> ObtenerChatId(int vendedorId, int productoId)
 {
     try
@@ -402,7 +397,7 @@ public async Task<int> ObtenerChatId(int vendedorId, int productoId)
         var compradorId = Preferences.Get("userId", 0);
         var datos = new { vendedor_id = vendedorId, comprador_id = compradorId, producto_id = productoId };
         
-        // La ruta debe coincidir con [HttpPost("get-or-create")] en MensajesController
+        
         var response = await _httpClient.PostAsJsonAsync("api/mensajes/get-or-create", datos);
         if (response.IsSuccessStatusCode)
         {
@@ -415,12 +410,12 @@ public async Task<int> ObtenerChatId(int vendedorId, int productoId)
     return 0;
 }
 
-// 2. Obtener la lista de mensajes
+
 public async Task<List<Mensaje>> ObtenerMensajes(int chatId)
 {
     try
     {
-        // La ruta coincide con [HttpGet("{chatId}")]
+        
         var response = await _httpClient.GetAsync($"api/mensajes/{chatId}");
         if (!response.IsSuccessStatusCode) return new List<Mensaje>();
         
@@ -432,21 +427,19 @@ public async Task<List<Mensaje>> ObtenerMensajes(int chatId)
     catch { return new List<Mensaje>(); }
 }
 
-// 3. Enviar un mensaje (Unificado y corregido)
+
 public async Task<bool> EnviarMensaje(int chatId, string texto)
 {
     try
     {
-        // IMPORTANTE: Cambiamos 'Conversacion' por 'Chat_id' 
-        // para que coincida con el modelo del Backend
+        
         var datos = new 
         { 
-            Chat_id = chatId, // <--- Este es el cambio clave
+            Chat_id = chatId, 
             EmisorId = Preferences.Get("userId", 0), 
             Contenido = texto,
             Fecha = DateTime.Now
-            // He quitado 'Leido' porque si no está en tu base de datos 
-            // podría darte otro error de columna desconocida.
+            
         };
         
         var response = await _httpClient.PostAsJsonAsync("api/mensajes", datos);
@@ -469,7 +462,7 @@ public async Task<bool> ActualizarEstadoProducto(int productoId, int nuevoEstado
 {
     try 
     {
-        // Enviamos el número directamente (0, 1 o 2) al nuevo endpoint
+        
         var response = await _httpClient.PutAsJsonAsync($"api/productos/{productoId}/estado", nuevoEstado);
         return response.IsSuccessStatusCode;
     } 
@@ -487,7 +480,7 @@ public async Task<List<ChatBandeja>> ObtenerBandejaEntrada(int userId)
         {
             var json = await response.Content.ReadAsStringAsync();
             
-            // Aquí le decimos que use la nueva clase ChatBandeja al deserializar
+           
             return JsonSerializer.Deserialize<List<ChatBandeja>>(json, _jsonOptions) 
                    ?? new List<ChatBandeja>();
         }
@@ -502,7 +495,7 @@ public async Task<bool> AceptarReservaProducto(int productoId, int compradorId)
 {
     try
     {
-        // Llamamos al nuevo endpoint pasando el ID del comprador en el cuerpo
+       
         var response = await _httpClient.PutAsJsonAsync($"api/productos/{productoId}/aceptar-reserva", compradorId);
         return response.IsSuccessStatusCode;
     }
@@ -516,9 +509,9 @@ public async Task<bool> CancelarReservaProducto(int productoId)
 {
     try
     {
-        AplicarToken(); // Aseguramos que enviamos quién eres al servidor
+        AplicarToken(); 
 
-        // Usamos PutAsync porque vamos a "editar" el estado del producto
+        
         var response = await _httpClient.PutAsync($"api/productos/{productoId}/cancelar-reserva", null);
 
         if (response.IsSuccessStatusCode)
@@ -527,7 +520,7 @@ public async Task<bool> CancelarReservaProducto(int productoId)
         }
         else
         {
-            // Esto nos dirá en la consola de Visual Studio si el error es 404, 500, etc.
+            
             string errorDetallado = await response.Content.ReadAsStringAsync();
             Debug.WriteLine($"❌ Error API al cancelar ({response.StatusCode}): {errorDetallado}");
             return false;
@@ -544,7 +537,7 @@ public async Task<bool> ConfirmarVentaProducto(int productoId)
     try
     {
         AplicarToken();
-        // Llamamos a la nueva ruta que acabamos de crear en el backend
+        
         var response = await _httpClient.PutAsync($"api/productos/{productoId}/confirmar-venta", null);
         return response.IsSuccessStatusCode;
     }
@@ -558,13 +551,13 @@ public async Task<ItemPop> GetProductoById(int id)
 {
     try
     {
-        // Importante: No pongas "/" al principio de api si ya lo tienes en BaseAddress
+        
         var response = await _httpClient.GetAsync($"api/productos/{id}");
         
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
-            // Usamos las _jsonOptions de tu clase para que ignore mayúsculas/minúsculas
+            
             return JsonSerializer.Deserialize<ItemPop>(content, _jsonOptions);
         }
         else 

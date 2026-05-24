@@ -14,10 +14,10 @@ public partial class VenderPage : ContentPage
     public VenderPage()
     {
         InitializeComponent();
-        // No llamamos a CargarCategorias aquí para evitar errores de interfaz
+        
     }
 
-    // Este método se ejecuta CADA VEZ que entras a la pantalla
+    
     protected override async void OnAppearing()
     {
         base.OnAppearing();
@@ -72,7 +72,7 @@ public partial class VenderPage : ContentPage
 
     private async void BtnAgregarProducto_Clicked(object sender, EventArgs e)
     {
-        // 1. Validaciones básicas
+        
         if (string.IsNullOrWhiteSpace(NombreEntry.Text) || string.IsNullOrWhiteSpace(PrecioEntry.Text))
         {
             await DisplayAlert("Error", "Nombre y precio son obligatorios", "OK");
@@ -87,17 +87,17 @@ public partial class VenderPage : ContentPage
 
         try 
         {
-            // 2. Preparación de datos
+           
             int usuarioId = Preferences.Get("userId", 0);
             
-            // Obtenemos la categoría seleccionada
+           
             var categoriaSeleccionada = (Categoria)CategoriaPicker.SelectedItem;
             int categoriaId = categoriaSeleccionada.Id; 
             
             string estado = EstadoPicker.SelectedItem.ToString();
             string caracteristicas = CaracteristicasEditor.Text ?? "Sin especificar";
             
-            // Validar formato del precio
+            
             if (!decimal.TryParse(PrecioEntry.Text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal precio))
             {
                 await DisplayAlert("Error", "El precio no tiene un formato válido", "OK");
@@ -121,7 +121,7 @@ public partial class VenderPage : ContentPage
             {
                 await DisplayAlert("Éxito", "¡Producto publicado!", "OK");
                 
-                // Avisamos a otras pantallas que hay cambios
+                
                 MessagingCenter.Send<App>((App)Application.Current, "ActualizarPerfil");
                 
                 await Navigation.PopAsync();

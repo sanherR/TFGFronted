@@ -10,7 +10,7 @@ namespace Apptech.Models
 
         private bool _esFavorito;
         private int _vendido;
-        private string _imagenUrlBase; // Guardamos el valor puro de la API aquí
+        private string _imagenUrlBase; 
 
         [JsonPropertyName("id_producto")]
         public int Id { get; set; }
@@ -51,9 +51,9 @@ namespace Apptech.Models
             }
         }
 
-        // --- LÓGICA DE IMAGEN (LA CLAVE) ---
         
-        [JsonPropertyName("imagen_url")] // Asegúrate que este nombre coincida con tu JSON
+        
+        [JsonPropertyName("imagen_url")] 
         public string ImagenUrlBase 
         { 
             get => _imagenUrlBase;
@@ -70,7 +70,7 @@ namespace Apptech.Models
                 return $"https://tfgbacken-production.up.railway.app{ImagenUrlBase}";
             }
         }
-        // ----------------------------------
+        
 
         public bool EsReservado => Vendido == 1;
         public bool PuedeComprar => Vendido == 0;

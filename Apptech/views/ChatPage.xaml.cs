@@ -90,8 +90,7 @@ public partial class ChatPage : ContentPage, INotifyPropertyChanged
     NombreProducto = producto.Nombre;
     PrecioProducto = $"{producto.Precio}€";
 
-    // --- AQUÍ ESTÁ EL CAMBIO ---
-    // Usamos la lógica de tu modelo Producto para asegurar que la URL sea completa
+   
     if (!string.IsNullOrEmpty(producto.ImagenUrl) && !producto.ImagenUrl.StartsWith("http"))
     {
         ImagenProducto = $"https://tfgbacken-production.up.railway.app{producto.ImagenUrl}";
@@ -100,7 +99,7 @@ public partial class ChatPage : ContentPage, INotifyPropertyChanged
     {
         ImagenProducto = producto.ImagenUrl; // Ya es completa o está vacía
     }
-    // ----------------------------
+   
 
     Debug.WriteLine($"DEBUG: URL final de la imagen: {ImagenProducto}");
 
@@ -175,7 +174,7 @@ private async void OnConfirmarVentaClicked(object sender, EventArgs e)
             
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                ConfigurarBotonReserva(2); // Cambia la interfaz a modo "Vendido"
+                ConfigurarBotonReserva(2); 
             });
 
             await ActualizarListaMensajes();
@@ -325,7 +324,7 @@ private async void OnConfirmarVentaClicked(object sender, EventArgs e)
 
         int miId = Preferences.Get("userId", 0);
         
-        // El otro usuario es el que tiene un EmisorId distinto al mío
+        
         var otro = mensajes.FirstOrDefault(m => m.EmisorId != miId);
         return otro?.EmisorId ?? 0;
     }

@@ -10,7 +10,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         
-        // 🎧 ESCUCHAS FIJAS GLOBALES (Canal universal con 'object')
+        
         MessagingCenter.Unsubscribe<object>(this, "ActualizarMainPage");
         MessagingCenter.Subscribe<object>(this, "ActualizarMainPage", (sender) =>
         {
@@ -18,7 +18,7 @@ public partial class MainPage : ContentPage
             MessagingCenter.Send<object>(this, "ForzarRefrescoProductos");
         });
 
-        // Escucha si editas un producto desde EditarProductoPage u otra pantalla
+        
         MessagingCenter.Unsubscribe<object>(this, "ActualizarPerfil");
         MessagingCenter.Subscribe<object>(this, "ActualizarPerfil", (sender) =>
         {
@@ -31,11 +31,9 @@ public partial class MainPage : ContentPage
     {
         base.OnAppearing();
         Debug.WriteLine("🔄 [MainPage] Pasando por OnAppearing (Flecha de atrás pulsada). Forzando actualización interna.");
-        // Al volver atrás, mandamos un pulso para que la pestaña de productos se refresque sola
         MessagingCenter.Send<object>(this, "ForzarRefrescoProductos");
     }
 
-    // --- MÉTODOS DE NAVEGACIÓN ---
     private void IrAProductos(object sender, EventArgs e)
     {
         miCarrusel.ScrollTo(0, animate: true);

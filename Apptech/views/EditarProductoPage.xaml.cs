@@ -13,16 +13,16 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
     private Stream _imagenStream;
     private string _nombreArchivo;
 
-    // Comandos para los botones del XAML
+    
     public ICommand GuardarCommand { get; }
     public ICommand CambiarImagenCommand { get; }
 
-    // Propiedades vinculadas al XAML (Bindings)
+    
     public string Nombre { get; set; }
     public string Descripcion { get; set; }
     public decimal Precio { get; set; }
     public int categoriaId { get; set; }
-    public string Estado_producto { get; set; } // Lo usamos para el Binding del Picker
+    public string Estado_producto { get; set; } 
     public string Caracteristicas { get; set; }
 
     private ImageSource _imagenPreview;
@@ -43,7 +43,7 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
         Precio = producto.Precio;
         categoriaId = producto.CategoriaId;
         
-        // Mapeamos desde tu modelo Producto.cs
+        // Mapeamos
         Estado_producto = producto.Estado ?? "Nuevo"; 
         Caracteristicas = producto.Caracteristicas ?? "";
         
@@ -54,7 +54,6 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
         GuardarCommand = new Command(async () => await Guardar());
         CambiarImagenCommand = new Command(async () => await SeleccionarImagen());
 
-        // Establecemos el contexto de datos para que el XAML funcione
         BindingContext = this;
     }
 
@@ -68,13 +67,13 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
     {
         try 
         {
-            // 1. Cargamos las categorías del servidor para el Picker
+            
             var listaCategorias = await _apiService.ObtenerCategorias();
             if (listaCategorias != null && CategoriaPicker != null) 
             {
                 CategoriaPicker.ItemsSource = listaCategorias;
                 
-                // Seleccionamos automáticamente la categoría actual del producto
+                
                 var seleccionada = listaCategorias.FirstOrDefault(c => c.Id == categoriaId);
                 if (seleccionada != null)
                 {
@@ -82,7 +81,7 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
                 }
             }
 
-            // 2. Seleccionamos el estado actual en el Picker de estados
+            
             if (EstadoPicker != null && !string.IsNullOrEmpty(Estado_producto))
             {
                 EstadoPicker.SelectedItem = Estado_producto;
@@ -98,12 +97,10 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
 {
     try 
     {
-        // 1. EXTRAEMOS EL ID REAL (Prueba con id_producto que es como viene del JSON del Back)
+        // 1. EXTRAEMOS EL ID REAL 
         int idFinalProducto = _producto.Id; 
 
-        // Si tu objeto en la App usa la propiedad "Id" con mayúscula pero venía vacía,
-        // asegúrate de verificar cómo se llama en tu modelo 'Producto' del móvil.
-        // Si tu modelo en la app usa 'id_producto', mándale '_producto.id_producto'.
+        
 
         int precioFinal = (int)Math.Round(Precio);
 
@@ -111,9 +108,9 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
         int idFinalCat = catSeleccionada?.Id ?? categoriaId;
         string estadoFinal = EstadoPicker.SelectedItem?.ToString() ?? Estado_producto;
 
-        // 3. Llamada a la API pasándole el ID que toca
+        
         var success = await _apiService.ActualizarProducto(
-    _producto.Id, // Manda la propiedad del ID directo
+    _producto.Id, 
     Nombre,
     Descripcion,
     precioFinal,
@@ -131,7 +128,7 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
         }
         else
         {
-            // Modificamos el alert para que en la pantalla te diga qué ID está enviando el móvil
+            
             await DisplayAlert("Error", $"Servidor: Producto no encontrado. El móvil envió el ID: {idFinalProducto}", "OK");
         }
     }
@@ -156,7 +153,7 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
                 _imagenStream = await result.OpenReadAsync();
                 _nombreArchivo = result.FileName;
                 
-                // Cambiamos la vista previa en la pantalla
+                
                 ImagenPreview = ImageSource.FromStream(() => _imagenStream);
             }
         }
@@ -166,7 +163,7 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
         }
     }
 
-    // Lógica para notificar cambios a la interfaz (UI)
+    
     public event PropertyChangedEventHandler PropertyChanged;
     protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {

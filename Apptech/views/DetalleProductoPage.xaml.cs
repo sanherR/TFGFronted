@@ -27,19 +27,17 @@ namespace Apptech.views
             return;
         }
 
-        // 3. LA CLAVE: Llamamos a la API para crear el chat en la base de datos
-        // Esto hará que en phpMyAdmin aparezca la fila en la tabla conversaciones
+    
         int chatIdReal = await _apiService.ObtenerOCrearChat(producto.UsuarioId, producto.Id);
 
         if (chatIdReal > 0)
         {
-            // 4. Si el servidor nos da un ID (ej: chat número 5), vamos a la pantalla de burbujas
-            // Usamos el constructor que recibe el ID y el nombre del producto
+            
             await Navigation.PushAsync(new ChatPage(chatIdReal, producto.Nombre));
         }
         else 
         {
-            // Si llega aquí, es que la API falló (revisa que el servidor esté encendido)
+            
             await DisplayAlert("Error", "No se pudo conectar con el vendedor.", "OK");
         }
     }
