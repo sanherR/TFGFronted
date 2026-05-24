@@ -57,13 +57,33 @@ public partial class ChatPage : ContentPage, INotifyPropertyChanged
 
     // Constructor para cuando vienes de un producto (Botón Contactar)
     public ChatPage(ItemPop producto)
-    {
-        InitializeComponent();
-        _productoId = producto.Id;
-        _vendedorId = producto.UsuarioId;
-        BindingContext = this;
-        _ = IniciarChatDesdeProducto(producto);
-    }
+{
+    InitializeComponent();
+    
+    
+    _productoId = producto.Id;
+    _vendedorId = producto.UsuarioId;
+    
+    
+    NombreProducto = producto.Nombre;
+    PrecioProducto = $"{producto.Precio:F2} €"; 
+    
+    
+    ImagenProducto = FixUrl(producto.ImagenUrl); 
+    
+    BindingContext = this;
+    
+    
+    _ = IniciarChatDesdeProducto(producto);
+}
+
+
+private string FixUrl(string url)
+{
+    if (string.IsNullOrEmpty(url)) return "placeholder.png";
+    if (url.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return url;
+    return $"https://tfgbacken-production.up.railway.app/{url.TrimStart('/')}";
+}
 
     // --- LÓGICA DE INICIO ---
 
@@ -88,7 +108,7 @@ public partial class ChatPage : ContentPage, INotifyPropertyChanged
     int estadoVendido = producto.Vendido; 
 
     NombreProducto = producto.Nombre;
-    PrecioProducto = $"{producto.Precio}€";
+    PrecioProducto = $"{producto.Precio:F2} €";
 
    
     if (!string.IsNullOrEmpty(producto.ImagenUrl) && !producto.ImagenUrl.StartsWith("http"))
@@ -97,7 +117,7 @@ public partial class ChatPage : ContentPage, INotifyPropertyChanged
     }
     else
     {
-        ImagenProducto = producto.ImagenUrl; // Ya es completa o está vacía
+        ImagenProducto = producto.ImagenUrl; 
     }
    
 

@@ -18,7 +18,7 @@
                 
                 <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
                     <Label Text="{Binding NombreProducto}" FontAttributes="Bold" MaxLines="1" TextColor="Black"/>
-                    <Label Text="{Binding PrecioProducto, StringFormat='{0} €'}" TextColor="#2ecc71" FontAttributes="Bold"/>
+                    <Label Text="{Binding PrecioProducto}" TextColor="#2ecc71" FontAttributes="Bold"/>
                 </VerticalStackLayout>
 
                 <StackLayout Grid.Column="2" VerticalOptions="Center">
