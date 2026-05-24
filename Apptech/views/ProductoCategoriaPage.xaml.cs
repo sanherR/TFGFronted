@@ -71,7 +71,7 @@ public partial class ProductoCategoriaPage : ContentPage, INotifyPropertyChanged
                     UsuarioId = p.UsuarioId,
                     Estado = p.Estado,
                     Caracteristicas = p.Caracteristicas,
-                    ImagenUrl = p.ImagenUrl.StartsWith("http") ? p.ImagenUrl : $"http://10.0.2.2:5062{p.ImagenUrl}",
+                    ImagenUrlBase = p.ImagenUrl.StartsWith("http") ? p.ImagenUrl : $"https://tfgbacken-production.up.railway.app{p.ImagenUrl}",
                     
                     // USAMOS EL NOMBRE EXACTO DE TU ITEMPOP: Vendido
                     Vendido = p.Vendido 

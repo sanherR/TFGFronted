@@ -19,7 +19,7 @@ public class ApiService
     {
         _httpClient = new HttpClient();
         // Usamos la IP mágica para emuladores
-        _httpClient.BaseAddress = new Uri("http://10.0.2.2:5062/");
+        _httpClient.BaseAddress = new Uri("https://tfgbacken-production.up.railway.app");
         _httpClient.Timeout = TimeSpan.FromSeconds(10); 
     }
 
@@ -85,6 +85,20 @@ public async Task<bool> CrearProducto(
     { 
         Debug.WriteLine($"!!!! ERROR EXCEPCIÓN: {ex.Message}");
         return false; 
+    }
+}
+public async Task<List<Producto>> ObtenerProductosVendidos(string token)
+{
+    try {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
+        
+        // Al usar GetFromJsonAsync, no necesitas hacer el Deserialize manualmente
+        var result = await _httpClient.GetFromJsonAsync<List<Producto>>("api/productos/vendidos");
+        return result ?? new List<Producto>();
+    } 
+    catch (Exception ex) { 
+        Debug.WriteLine($"Error API: {ex.Message}");
+        return new List<Producto>(); 
     }
 }
     // --- ACTUALIZAR PRODUCTO (SIN CARACTERÍSTICAS NI ESTADO) ---
@@ -269,35 +283,47 @@ return System.Text.Json.JsonSerializer.Deserialize<LoginResponse>(json, _jsonOpt
     }
 }
 
-    public async Task<string> SubirImagenPerfil(Stream archivoStream, string nombreArchivoOriginal, string token)
+    
+
+public async Task<string> SubirImagenPerfil(Stream archivoStream, string nombreArchivoOriginal, string token)
+{
+    try 
     {
-        try {
-            var request = new HttpRequestMessage(HttpMethod.Post, "api/usuarios/upload-profile-image");
+        var request = new HttpRequestMessage(HttpMethod.Post, "api/usuarios/upload-profile-image");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
+        var content = new MultipartFormDataContent();
+        
+        if (archivoStream != null) 
+        {
+            var fileContent = new StreamContent(archivoStream);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+            content.Add(fileContent, "imagen", nombreArchivoOriginal);
+        } 
+        else return null;
 
-            var content = new MultipartFormDataContent();
+        request.Content = content;
+
+        var response = await _httpClient.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Leemos la respuesta como string
+            var json = await response.Content.ReadAsStringAsync();
             
-            if (archivoStream != null) {
-
-                var fileContent = new StreamContent(archivoStream);
-
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-
-                content.Add(fileContent, "imagen", nombreArchivoOriginal);
-            } 
-            else return null;
-
-            request.Content = content;
-
-            var response = await _httpClient.SendAsync(request);
-
-            var result = await response.Content.ReadAsStringAsync();
-
-            return response.IsSuccessStatusCode ? result.Trim('"') : null;
-
-        } catch { return null; }
+            // Usamos JsonDocument para extraer la propiedad "url" del JSON que envía tu backend
+            using var doc = JsonDocument.Parse(json);
+            return doc.RootElement.GetProperty("url").GetString();
+        }
+        
+        return null;
+    } 
+    catch (Exception ex) 
+    { 
+        Debug.WriteLine($"Error al subir imagen: {ex.Message}");
+        return null; 
     }
+}
     public async Task<bool> AñadirFavorito(int productoId)
     {
         try

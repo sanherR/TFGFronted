@@ -41,7 +41,7 @@ public partial class EditarProductoPage : ContentPage, INotifyPropertyChanged
         Nombre = producto.Nombre;
         Descripcion = producto.Descripcion;
         Precio = producto.Precio;
-        categoriaId = producto.categoria_id;
+        categoriaId = producto.CategoriaId;
         
         // Mapeamos desde tu modelo Producto.cs
         Estado_producto = producto.Estado ?? "Nuevo"; 

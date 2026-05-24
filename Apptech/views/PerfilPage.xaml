@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Apptech.views.PerfilPage"
-             x:Name="Root"  Title="Perfil"
+             x:Name="Root"  
+             Title="Perfil"
              BackgroundColor="White">
 
     <Grid ColumnDefinitions="*"
@@ -11,7 +12,6 @@
           Padding="0,10,0,20"
           HorizontalOptions="Fill">
 
-        <!-- FOTO PERFIL -->
         <Border Grid.Row="0"
                 HorizontalOptions="Center"
                 WidthRequest="120"
@@ -19,18 +19,14 @@
                 BackgroundColor="#F5F5F5"
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 60">
-
             <Image Source="{Binding Source={x:Reference Root}, Path=Perfil_url}"
                    Aspect="AspectFill">
-
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer Tapped="CambiarFoto" />
                 </Image.GestureRecognizers>
-
             </Image>
         </Border>
 
-        <!-- NOMBRE -->
         <Label Grid.Row="1"
                Text="{Binding Source={x:Reference Root}, Path=NombreUsuario}"
                FontSize="20"
@@ -39,20 +35,19 @@
                HorizontalOptions="Center"
                HorizontalTextAlignment="Center"/>
 
-        <!-- SELECTOR -->
         <HorizontalStackLayout Grid.Row="2"
                                HorizontalOptions="Center"
                                Spacing="15">
-
             <Button Text="Productos"
-                   Command="{Binding Source={x:Reference Root}, Path=MostrarProductosCommand}"/>
-
+                    Command="{Binding Source={x:Reference Root}, Path=MostrarProductosCommand}"/>
+            
+            <Button Text="Ventas"
+                    Command="{Binding Source={x:Reference Root}, Path=MostrarVentasCommand}" />
+            
             <Button Text="Favoritos"
                     Command="{Binding Source={x:Reference Root}, Path=MostrarFavoritosCommand}" />
-
         </HorizontalStackLayout>
 
-        <!-- PRODUCTOS (REUTILIZADO) -->
         <CollectionView Grid.Row="3"
                         ItemsSource="{Binding Source={x:Reference Root}, Path=ItemsActivos}"
                         VerticalOptions="FillAndExpand">
@@ -65,16 +60,18 @@
             </CollectionView.ItemsLayout>
 
             <CollectionView.ItemTemplate>
-
                 <DataTemplate>
-
                     <Border Margin="2"
                             BackgroundColor="#F5F5F5"
                             StrokeShape="RoundRectangle 15"
                             StrokeThickness="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding Source={x:Reference Root}, Path=VerDetalleProductoCommand}"
+                                CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
 
                         <VerticalStackLayout Padding="10" Spacing="5">
-
                             <Image Source="{Binding ImagenUrl}"
                                    Aspect="AspectFill"
                                    HeightRequest="120"
@@ -92,34 +89,25 @@
                                    FontAttributes="Bold"
                                    TextColor="#2ECC71"/>
 
-                                   <HorizontalStackLayout Spacing="10">
-
-                            <Button Text="Editar"
+                            <HorizontalStackLayout Spacing="10"
+                                                   IsVisible="{Binding Source={x:Reference Root}, Path=MostrarBotonesAccion}">
+                                <Button Text="Editar"
                                         FontSize="12"
                                         BackgroundColor="#3498DB"
                                         TextColor="White"
                                         Command="{Binding Source={x:Reference Root}, Path=EditarProductoCommand}"
                                         CommandParameter="{Binding .}" />
-
-                            <Button Text="Eliminar"
+                                <Button Text="Eliminar"
                                         FontSize="12"
                                         BackgroundColor="#E74C3C"
                                         TextColor="White"
                                         Command="{Binding Source={x:Reference Root}, Path=EliminarProductoCommand}"
                                         CommandParameter="{Binding .}" />
-
                             </HorizontalStackLayout>
-
                         </VerticalStackLayout>
-
                     </Border>
-
                 </DataTemplate>
-
             </CollectionView.ItemTemplate>
-
         </CollectionView>
-
     </Grid>
-
 </ContentPage>

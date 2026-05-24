@@ -9,7 +9,6 @@
         <VerticalStackLayout Padding="20" Spacing="15">
             <Label Text="Información del Producto" FontSize="20" FontAttributes="Bold" />
 
-            <!-- Nombre -->
             <Entry x:Name="NombreEntry" Placeholder="Nombre del producto" />
             
             <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
@@ -17,11 +16,9 @@
                 <Entry x:Name="StockEntry" Grid.Column="1" Placeholder="Stock" Keyboard="Numeric" Text="1" />
             </Grid>
 
-            <!-- SELECTOR DE CATEGORÍA -->
             <Label Text="Categoría" FontAttributes="Bold" Margin="0,5,0,0"/>
             <Picker x:Name="CategoriaPicker" Title="Selecciona una categoría" ItemDisplayBinding="{Binding Nombre}" />
 
-            <!-- SELECTOR DE ESTADO -->
             <Label Text="Estado del producto" FontAttributes="Bold" Margin="0,5,0,0"/>
             <Picker x:Name="EstadoPicker" Title="¿En qué estado está?">
                 <Picker.Items>
@@ -35,7 +32,6 @@
 
             <Entry x:Name="DescripcionEntry" Placeholder="Descripción corta (ej: Vendo por falta de uso)" />
 
-            <!-- CARACTERÍSTICAS TÉCNICAS -->
             <Label Text="Especificaciones técnicas" FontAttributes="Bold" Margin="0,5,0,0"/>
             <Editor x:Name="CaracteristicasEditor" 
                     Placeholder="Ej: Procesador i7, 16GB RAM, SSD 512GB..." 
@@ -48,6 +44,12 @@
                     Clicked="BtnSeleccionarImagen_Clicked" 
                     BackgroundColor="#3498db" 
                     TextColor="White" />
+
+            <Image x:Name="PreviewImage" 
+                   HeightRequest="200" 
+                   Aspect="AspectFill" 
+                   IsVisible="False" 
+                   Margin="0,10" />
 
             <Button Text="PUBLICAR PRODUCTO" 
                     Clicked="BtnAgregarProducto_Clicked" 

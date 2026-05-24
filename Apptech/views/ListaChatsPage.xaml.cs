@@ -8,6 +8,9 @@ namespace Apptech.views;
 public partial class ListaChatsPage : ContentPage
 {
     private readonly ApiService _apiService = new ApiService();
+    // Definimos la base aquí para reutilizarla
+    private readonly string baseUrl = "https://tfgbacken-production.up.railway.app";
+    
     public ObservableCollection<ChatBandeja> MisChats { get; set; } = new ObservableCollection<ChatBandeja>();
 
     public ListaChatsPage()
@@ -26,11 +29,9 @@ public partial class ListaChatsPage : ContentPage
     {
         try
         {
-            // Obtenemos el ID del usuario logueado
             int userId = Preferences.Get("userId", 0);
             if (userId == 0) return;
 
-            // Llamada al endpoint: api/mensajes/mis-chats/{userId}
             var chats = await _apiService.ObtenerBandejaEntrada(userId);
 
             MainThread.BeginInvokeOnMainThread(() =>
@@ -38,12 +39,15 @@ public partial class ListaChatsPage : ContentPage
                 MisChats.Clear();
                 foreach (var chat in chats)
                 {
-                    // Ajustamos la URL de la imagen si es necesario
-                    if (chat is { } c)
+                    // 1. Arreglamos la URL de la imagen
+                    if (!string.IsNullOrEmpty(chat.ImagenProductoUrl) && !chat.ImagenProductoUrl.StartsWith("http"))
                     {
-                        // Aquí podrías añadir lógica para formatear la URL de la imagen si el backend no la da completa
-                        MisChats.Add(chat);
+                        chat.ImagenProductoUrl = $"{baseUrl}/{chat.ImagenProductoUrl.TrimStart('/')}";
                     }
+
+                    // Nota: Si el backend envía NombreProducto y NombreUsuario, 
+                    // esta línea ya los incluye al añadir el objeto a la colección.
+                    MisChats.Add(chat);
                 }
             });
         }
@@ -54,26 +58,25 @@ public partial class ListaChatsPage : ContentPage
     }
 
     private async void OnChatSelected(object sender, SelectionChangedEventArgs e)
-{
-    var chatSeleccionado = e.CurrentSelection.FirstOrDefault() as ChatBandeja;
-    if (chatSeleccionado == null) return;
-    System.Diagnostics.Debug.WriteLine($"Probando Chat: {chatSeleccionado.Id} - Producto: {chatSeleccionado.ProductoId}");
-    // Deseleccionamos
-    ((CollectionView)sender).SelectedItem = null;
+    {
+        var chatSeleccionado = e.CurrentSelection.FirstOrDefault() as ChatBandeja;
+        if (chatSeleccionado == null) return;
 
-    try
-    {
-        // IMPORTANTE: Pasamos los 3 datos. 
-        // Si 'chatSeleccionado.ProductoId' es el ID real, el botón verde funcionará.
-        await Navigation.PushAsync(new ChatPage(
-            chatSeleccionado.Id, 
-            chatSeleccionado.TituloChat, 
-            chatSeleccionado.ProductoId
-        ));
+        // Deseleccionamos para que se pueda volver a clicar el mismo chat
+        ((CollectionView)sender).SelectedItem = null;
+
+        try
+        {
+            // Pasamos los datos al ChatPage
+            await Navigation.PushAsync(new ChatPage(
+                chatSeleccionado.Id, 
+                chatSeleccionado.TituloChat, 
+                chatSeleccionado.ProductoId
+            ));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"❌ Error al abrir el chat: {ex.Message}");
+        }
     }
-    catch (Exception ex)
-    {
-        Debug.WriteLine($"❌ Error al abrir el chat: {ex.Message}");
-    }
-}
 }

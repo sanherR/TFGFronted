@@ -9,7 +9,8 @@ namespace Apptech.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _esFavorito;
-        private int _vendido; // Ahora lo manejamos con el setter para notificar cambios
+        private int _vendido;
+        private string _imagenUrlBase; // Guardamos el valor puro de la API aquí
 
         [JsonPropertyName("id_producto")]
         public int Id { get; set; }
@@ -34,7 +35,6 @@ namespace Apptech.Models
         [JsonPropertyName("estado_producto")]
         public string Estado { get; set; } = string.Empty;
 
-        // Sincronizado con la columna 'vendido' del Backend
         [JsonPropertyName("vendido")]
         public int Vendido 
         { 
@@ -45,22 +45,35 @@ namespace Apptech.Models
                 {
                     _vendido = value;
                     OnPropertyChanged();
-                    // Notificamos a las propiedades calculadas para que la UI se actualice
                     OnPropertyChanged(nameof(EsReservado));
                     OnPropertyChanged(nameof(PuedeComprar));
                 }
             }
         }
 
-        // --- LÓGICA PARA LA INTERFAZ ---
+        // --- LÓGICA DE IMAGEN (LA CLAVE) ---
         
-        // Si Vendido es 1, mostramos el cartelito de RESERVADO
+        [JsonPropertyName("imagen_url")] // Asegúrate que este nombre coincida con tu JSON
+        public string ImagenUrlBase 
+        { 
+            get => _imagenUrlBase;
+            set { _imagenUrlBase = value; OnPropertyChanged(nameof(ImagenUrl)); }
+        }
+
+        [JsonIgnore]
+        public string ImagenUrl 
+        { 
+            get 
+            {
+                if (string.IsNullOrEmpty(ImagenUrlBase)) return "placeholder.png";
+                if (ImagenUrlBase.StartsWith("http")) return ImagenUrlBase;
+                return $"https://tfgbacken-production.up.railway.app{ImagenUrlBase}";
+            }
+        }
+        // ----------------------------------
+
         public bool EsReservado => Vendido == 1;
-
-        // Solo se puede comprar si Vendido es 0
         public bool PuedeComprar => Vendido == 0;
-
-        // -------------------------------
 
         public bool EsFavorito
         {
@@ -76,11 +89,7 @@ namespace Apptech.Models
             }
         }
 
-        public string IconoFavorito =>
-            EsFavorito ? "heart_filled.png" : "heart_empty.png";
-
-        [JsonPropertyName("imagenUrl")]
-        public string ImagenUrl { get; set; } = string.Empty;
+        public string IconoFavorito => EsFavorito ? "heart_filled.png" : "heart_empty.png";
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

@@ -13,7 +13,7 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
 {
     private readonly ApiService _apiService = new ApiService();
     // 💡 IMPORTANTE: Asegúrate de que esta IP sea la misma que usas en el ApiService
-    private readonly string baseUrl = "http://10.0.2.2:5062/"; 
+    private readonly string baseUrl = "https://tfgbacken-production.up.railway.app"; 
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -31,6 +31,9 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    // Añade esta línea debajo de tus colecciones de Productos y Favoritos:
+public ObservableCollection<Producto> Ventas { get; set; } = new ObservableCollection<Producto>();
+
 
     private string nombreUsuario;
     public string NombreUsuario
@@ -40,10 +43,44 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
     }
 
     private ImageSource perfil_url;
-    public ImageSource Perfil_url
+public ImageSource Perfil_url
+{
+    get => perfil_url;
+    set 
+    { 
+        if (perfil_url != value)
+        {
+            perfil_url = value;
+            OnPropertyChanged(); // Esto avisa a la interfaz XAML que debe repintar la imagen
+        }
+    }
+}
+public async Task CargarVentas()
+{
+    try
     {
-        get => perfil_url;
-        set { perfil_url = value; OnPropertyChanged(); }
+        // Usamos el token en lugar del userId
+        var token = Preferences.Get("token", "");
+        var ventasRecibidas = await _apiService.ObtenerProductosVendidos(token);
+        
+        if (ventasRecibidas != null)
+        {
+            Ventas.Clear();
+            foreach (var v in ventasRecibidas)
+            {
+                v.ImagenUrlBase = FixUrl(v.ImagenUrl);
+                Ventas.Add(v);
+            }
+        }
+    }
+    catch (Exception ex) { Debug.WriteLine("❌ Error al cargar ventas: " + ex.Message); }
+}
+    // CONTROLADORES DE INTERFAZ: Para gestionar dinámicamente los botones de Editar/Eliminar
+    private bool _mostrarBotonesAccion = true;
+    public bool MostrarBotonesAccion
+    {
+        get => _mostrarBotonesAccion;
+        set { _mostrarBotonesAccion = value; OnPropertyChanged(); }
     }
 
     public PerfilPage()
@@ -67,24 +104,24 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
         });
         */
     }
+
     protected override async void OnAppearing()
 {
     base.OnAppearing();
-    // Forzamos la limpieza y recarga cada vez que entramos a la pestaña
-    await CargarProductos();
+    await Task.WhenAll(CargarProductos(), CargarFavoritos(), CargarVentas());
 }
+
     private async Task InicializarDatosAsync()
 {
     try 
     {
         Debug.WriteLine("--- INICIANDO CARGA DE PERFIL ---");
         
-        // Verificamos si tenemos el token antes de disparar
         var token = Preferences.Get("token", "");
         Debug.WriteLine($"DEBUG: Token actual: {(string.IsNullOrEmpty(token) ? "VACÍO ❌" : "OK ✅")}");
 
-        // Ejecuta las 3 cargas
-        await Task.WhenAll(CargarPerfil(), CargarFavoritos(), CargarProductos());
+        // ✅ AÑADE CargarVentas() AQUÍ dentro del Task.WhenAll
+        await Task.WhenAll(CargarPerfil(), CargarFavoritos(), CargarProductos(), CargarVentas());
         
         Debug.WriteLine("--- CARGA FINALIZADA SIN ERRORES CRÍTICOS ---");
     }
@@ -96,9 +133,23 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
 
     // --- COMANDOS ---
 
-    public ICommand MostrarProductosCommand => new Command(() => ItemsActivos = Productos);
+    public ICommand MostrarProductosCommand => new Command(() => 
+    {
+        ItemsActivos = Productos;
+        MostrarBotonesAccion = true; // Activa los botones cuando miras tus productos
+    });
 
-    public ICommand MostrarFavoritosCommand => new Command(() => ItemsActivos = Favoritos);
+    public ICommand MostrarFavoritosCommand => new Command(() => 
+    {
+        ItemsActivos = Favoritos;
+        MostrarBotonesAccion = false; // ¡Oculta los botones cuando miras favoritos!
+    });
+    public ICommand MostrarVentasCommand => new Command(() => 
+{
+    ItemsActivos = Ventas;
+    MostrarBotonesAccion = false; // No debe haber edición en el historial de ventas
+});
+
 
     public ICommand EditarProductoCommand => new Command<Producto>(async (producto) =>
     {
@@ -112,9 +163,37 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
             await EliminarProducto(producto);
     });
 
+    // COMANDO ACTUALIZADO CON TODOS LOS CAMPOS PARA EL DETALLE SANO Y SALVO
+    public ICommand VerDetalleProductoCommand => new Command<Producto>(async (producto) =>
+    {
+        if (producto == null) return;
+
+        Debug.WriteLine($"[MAUI DEBUG] Abriendo detalle de: {producto.Nombre}");
+        Debug.WriteLine($"-> ID Producto: {producto.Id} | Vendedor/Usuario ID: {producto.UsuarioId}");
+
+        // Transformamos el modelo pasando absolutamente todas las propiedades
+        // Transformamos el modelo pasando absolutamente todas las propiedades
+var itemPop = new ItemPop
+{
+    Id = producto.Id,
+    Nombre = producto.Nombre,
+    Precio = (decimal)producto.Precio, // Asegúrate de castear si el tipo difiere
+    // AQUÍ ESTÁ EL CAMBIO: Asignamos a ImagenUrlBase, no a ImagenUrl
+    ImagenUrlBase = producto.ImagenUrl, 
+    UsuarioId = producto.UsuarioId,
+    Descripcion = producto.Descripcion,
+    Estado = producto.Estado,
+    Caracteristicas = producto.Caracteristicas, 
+    EsFavorito = true 
+};
+
+        // Redirección directa pasándole el objeto completo mapeado sin ceros intermedios
+        await Navigation.PushAsync(new DetalleProductoPage(itemPop));
+    });
+
     // --- MÉTODOS DE CARGA ---
 
-    public async Task CargarProductos()
+   public async Task CargarProductos()
 {
     try 
     {
@@ -123,45 +202,65 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
 
         if (productosRecibidos != null)
         {
-            // 1. Limpiamos las listas
+            // 1. Limpiamos la colección principal
             Productos.Clear();
             
             foreach (var p in productosRecibidos) 
             {
-                // 2. Filtro: Si Vendido es 2, es que ya se completó la venta.
-                // Los que son 0 (disponibles) o 1 (reservados) deben salir en tu perfil.
+                // 2. Filtro: Solo mostramos disponibles (0) o reservados (1)
+                // Los vendidos (2) no deben aparecer aquí, ya están en el historial de ventas
                 if (p.Vendido != 2) 
                 {
-                    p.ImagenUrl = FixUrl(p.ImagenUrl);
+                    p.ImagenUrlBase = FixUrl(p.ImagenUrl);
                     Productos.Add(p);
                 }
             }
             
-            // 3. LA CLAVE: Asignamos a ItemsActivos para que la UI se entere
-            ItemsActivos = new ObservableCollection<Producto>(Productos);
+            // 3. ACTUALIZACIÓN SEGURA DE LA VISTA:
+            // Si el usuario está viendo "Mis Productos" (MostrarBotonesAccion == true),
+            // refrescamos la lista que se está renderizando en pantalla.
+            if (MostrarBotonesAccion)
+            {
+                // Creamos una nueva referencia para asegurar que el Binding se dispare
+                ItemsActivos = new ObservableCollection<Producto>(Productos);
+            }
             
-            Debug.WriteLine($"✅ Productos cargados en perfil: {ItemsActivos.Count}");
+            Debug.WriteLine($"✅ Productos cargados en perfil: {Productos.Count}");
         }
     }
     catch (Exception ex)
     {
-        Debug.WriteLine("❌ Error al cargar perfil: " + ex.Message);
+        Debug.WriteLine($"❌ Error al cargar productos: {ex.Message}");
     }
 }
 
     public async Task CargarFavoritos()
     {
-        var token = Preferences.Get("token", "");
-        var favoritos = await _apiService.ObtenerFavoritos(token);
-
-        if (favoritos != null)
+        try
         {
-            Favoritos.Clear();
-            foreach (var f in favoritos)
+            var token = Preferences.Get("token", "");
+            var favoritos = await _apiService.ObtenerFavoritos(token);
+
+            if (favoritos != null)
             {
-                f.ImagenUrl = FixUrl(f.ImagenUrl);
-                Favoritos.Add(f);
+                Favoritos.Clear();
+                foreach (var f in favoritos)
+                {
+                    // ❌ ELIMINA ESTA LÍNEA: f.ImagenUrlBase = FixUrl(f.ImagenUrl);
+                    // ✅ AÑADE EL PRODUCTO TAL CUAL VIENE DE LA API
+                    Favoritos.Add(f);
+                }
+
+                if (!MostrarBotonesAccion)
+                {
+                    ItemsActivos = new ObservableCollection<Producto>(Favoritos);
+                }
+                Debug.WriteLine($"✅ Favoritos cargados: {Favoritos.Count}");
             }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("❌ Error al cargar favoritos: " + ex.Message);
         }
     }
 
@@ -172,32 +271,64 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
 
     if (perfil == null) 
     {
-        System.Diagnostics.Debug.WriteLine("⚠️ CargarPerfil: El objeto 'perfil' llegó NULL desde la API.");
+        Debug.WriteLine("⚠️ CargarPerfil: El objeto 'perfil' llegó NULL desde la API.");
         return;
     }
 
-    System.Diagnostics.Debug.WriteLine($"✅ CargarPerfil: Datos recibidos para {perfil.Nombre}");
+    Debug.WriteLine($"✅ CargarPerfil: Datos recibidos para {perfil.Nombre}.");
+    Debug.WriteLine($"   URL Perfil: {perfil.PerfilUrl} | Foto Perfil: {perfil.FotoPerfil}");
 
+    // 1. Actualizamos el nombre
     NombreUsuario = perfil.Nombre;
     OnPropertyChanged(nameof(NombreUsuario));
-        
-        if (string.IsNullOrEmpty(perfil.PerfilUrl))
+            
+    // 2. Gestión de la imagen con prioridad: foto_perfil (FotoPerfil) es la columna correcta
+    string urlAUsar = !string.IsNullOrEmpty(perfil.FotoPerfil) ? perfil.FotoPerfil : perfil.PerfilUrl;
+
+    if (string.IsNullOrEmpty(urlAUsar))
+    {
+        Debug.WriteLine("⚠️ No hay URL de imagen disponible, usando default.");
+        Perfil_url = ImageSource.FromFile("perfil_default.png");
+    }
+    else
+    {
+        try 
         {
-            Perfil_url = ImageSource.FromFile("perfil_default.png");
+            // Usamos FixUrl para asegurar dominio + formato correcto
+            // Nota: Asegúrate de que tu FixUrl use .TrimStart('/') para evitar dobles barras
+            string urlFinal = FixUrl(urlAUsar);
+            Debug.WriteLine($"🌐 Cargando imagen final desde: {urlFinal}");
+            
+            // Asignamos la imagen (Forzamos la creación del objeto Uri)
+            Perfil_url = ImageSource.FromUri(new Uri(urlFinal));
         }
-        else
+        catch (Exception ex)
         {
-            // FixUrl también para la imagen de perfil si viene relativa
-            Perfil_url = ImageSource.FromUri(new Uri(FixUrl(perfil.PerfilUrl)));
+            Debug.WriteLine($"❌ Error al procesar la URL de la imagen: {ex.Message}");
+            Perfil_url = ImageSource.FromFile("perfil_default.png");
         }
     }
 
+    // 3. Avisamos explícitamente a la interfaz del cambio
+    OnPropertyChanged(nameof(Perfil_url));
+}
+
     private string FixUrl(string url)
-    {
-        if (string.IsNullOrEmpty(url)) return "";
-        if (url.StartsWith("http")) return url;
-        return $"{baseUrl}{url.TrimStart('/')}";
-    }
+{
+    // 1. Si está vacío o es nulo, devuelve un placeholder o vacío
+    if (string.IsNullOrEmpty(url)) 
+        return "perfil_default.png"; 
+
+    // 2. Si ya es una URL completa (http...), devuélvela tal cual
+    if (url.StartsWith("http", StringComparison.OrdinalIgnoreCase)) 
+        return url;
+
+    // 3. Garantizamos: BASE_URL + "/" + RUTA_LIMPIA
+    // .TrimEnd('/') quita la barra del final de la base (si existe)
+    // .TrimStart('/') quita la barra del inicio de la ruta (si existe)
+    // Esto asegura que siempre haya exactamente una barra separadora.
+    return $"{baseUrl.TrimEnd('/')}/{url.TrimStart('/')}";
+}
 
     public async void CambiarFoto(object sender, EventArgs e)
     {
@@ -218,25 +349,25 @@ public partial class PerfilPage : ContentPage, INotifyPropertyChanged
     }
 
     private async Task EliminarProducto(Producto producto)
-{
-    bool confirm = await Application.Current.MainPage.DisplayAlert("Eliminar", "¿Estás seguro?", "Sí", "No");
-    if (!confirm) return;
-
-    var success = await _apiService.EliminarProducto(producto.Id);
-    if (success)
     {
-        // 1. Borramos de la lista general
-        if (Productos.Contains(producto)) Productos.Remove(producto);
-        
-        // 2. ¡CLAVE!: Borramos de la lista que la pantalla está renderizando realmente
-        if (ItemsActivos.Contains(producto)) ItemsActivos.Remove(producto);
-        
-        // 3. Avisamos a la MainPage de que este producto ya no existe
-        MessagingCenter.Send<App>((App)Application.Current, "ActualizarMainPage");
-        
-        await Application.Current.MainPage.DisplayAlert("Éxito", "Producto eliminado correctamente", "OK");
+        bool confirm = await Application.Current.MainPage.DisplayAlert("Eliminar", "¿Estás seguro?", "Sí", "No");
+        if (!confirm) return;
+
+        var success = await _apiService.EliminarProducto(producto.Id);
+        if (success)
+        {
+            // 1. Borramos de la lista general
+            if (Productos.Contains(producto)) Productos.Remove(producto);
+            
+            // 2. ¡CLAVE!: Borramos de la lista que la pantalla está renderizando realmente
+            if (ItemsActivos.Contains(producto)) ItemsActivos.Remove(producto);
+            
+            // 3. Avisamos a la MainPage de que este producto ya no existe
+            MessagingCenter.Send<App>((App)Application.Current, "ActualizarMainPage");
+            
+            await Application.Current.MainPage.DisplayAlert("Éxito", "Producto eliminado correctamente", "OK");
+        }
     }
-}
 
     protected void OnPropertyChanged([CallerMemberName] string name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

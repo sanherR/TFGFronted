@@ -83,24 +83,32 @@ public partial class ChatPage : ContentPage, INotifyPropertyChanged
     var producto = await _apiService.GetProductoById(idProducto);
     
     if (producto != null)
+{
+    _vendedorId = producto.UsuarioId;
+    int estadoVendido = producto.Vendido; 
+
+    NombreProducto = producto.Nombre;
+    PrecioProducto = $"{producto.Precio}€";
+
+    // --- AQUÍ ESTÁ EL CAMBIO ---
+    // Usamos la lógica de tu modelo Producto para asegurar que la URL sea completa
+    if (!string.IsNullOrEmpty(producto.ImagenUrl) && !producto.ImagenUrl.StartsWith("http"))
     {
-        _vendedorId = producto.UsuarioId;
-        
-        // Guardamos el estado real que viene de la base de datos
-        int estadoVendido = producto.Vendido; 
-
-        NombreProducto = producto.Nombre;
-        PrecioProducto = $"{producto.Precio}€";
-        ImagenProducto = producto.ImagenUrl;
-
-        Debug.WriteLine($"DEBUG: Datos cargados. Vendedor: {_vendedorId} | Estado: {estadoVendido}");
-
-        // Aquí es donde llamamos al método con el parámetro correcto
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            ConfigurarBotonReserva(estadoVendido);
-        });
+        ImagenProducto = $"https://tfgbacken-production.up.railway.app{producto.ImagenUrl}";
     }
+    else
+    {
+        ImagenProducto = producto.ImagenUrl; // Ya es completa o está vacía
+    }
+    // ----------------------------
+
+    Debug.WriteLine($"DEBUG: URL final de la imagen: {ImagenProducto}");
+
+    MainThread.BeginInvokeOnMainThread(() =>
+    {
+        ConfigurarBotonReserva(estadoVendido);
+    });
+}
 }
 
    private void ConfigurarBotonReserva(int estadoVendido = 0)

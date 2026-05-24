@@ -33,22 +33,34 @@ public partial class ProductosPage : ContentView
     public ICommand ActualizarProductosCommand { get; }
 
     public ProductosPage()
+{
+    InitializeComponent();
+    
+    // El BindingContext debe ser la propia clase para que el XAML vea las propiedades y el Comando
+    this.BindingContext = this;
+
+    // Inicializamos el comando de actualización apuntando al método REAL de tu archivo
+    ActualizarProductosCommand = new Command(async () => await CargarProductosAsync());
+
+    // Carga inicial cuando se monta el componente en el carrusel
+    Loaded += async (s, e) => await CargarProductosAsync();
+
+    // 🔄 ESCUCHA REENVÍO DESDE MAINPAGE (Detecta flecha de atrás, borrados y ediciones globales)
+    MessagingCenter.Unsubscribe<object>(this, "ForzarRefrescoProductos");
+    MessagingCenter.Subscribe<object>(this, "ForzarRefrescoProductos", async (sender) =>
     {
-        InitializeComponent();
-        
-        // El BindingContext debe ser la propia clase para que el XAML vea las propiedades y el Comando
-        this.BindingContext = this;
+        Debug.WriteLine("📥 [ProductosPage] Orden de actualización recibida desde la MainPage madre. Recargando API...");
+        await CargarProductosAsync();
+    });
 
-        // Inicializamos el comando de actualización
-        ActualizarProductosCommand = new Command(async () => await CargarProductosAsync());
-
-        // Carga inicial cuando se monta el componente
-        Loaded += async (s, e) => await CargarProductosAsync();
-
-        // Suscripción para refrescar datos cuando se venda algo
-        MessagingCenter.Subscribe<VenderPage>(this, "REFRESH_PRODUCTOS", async (s) => await CargarProductosAsync());
-    }
-
+    // 🛍️ ESCUCHA DIRECTA DESDE VENDERPAGE (Por si acaso tu vista de publicar sigue usando este canal)
+    MessagingCenter.Unsubscribe<VenderPage>(this, "REFRESH_PRODUCTOS");
+    MessagingCenter.Subscribe<VenderPage>(this, "REFRESH_PRODUCTOS", async (s) => 
+    {
+        Debug.WriteLine("📥 [ProductosPage] Refresco directo solicitado desde VenderPage.");
+        await CargarProductosAsync();
+    });
+}
     // 2. CARGA DE DATOS DESDE LA API
     public async Task CargarProductosAsync()
     {
@@ -74,18 +86,22 @@ public partial class ProductosPage : ContentView
                 MasPopulares.Clear();
 
                 foreach (var p in productosInvertidos)
-                {
-                    ItemPop itemParaAñadir = MapearAItemPop(p);
+{
+    // YA NO USAMOS MapearAItemPop. 
+    // Ahora 'p' ya tiene la propiedad ImagenUrl lista y corregida
+    // gracias a la lógica que pusimos en el modelo Producto.cs (o ItemPop.cs).
+    
+    ItemPop itemParaAñadir = p; // Directamente asignamos el producto
 
-                    // Añadimos a MasPopulares (Todos)
-                    MasPopulares.Add(itemParaAñadir);
+    // Añadimos a MasPopulares
+    MasPopulares.Add(itemParaAñadir);
 
-                    // Si estamos dentro de los primeros 8, añadimos a Novedades
-                    if (Novedades.Count < 8)
-                    {
-                        Novedades.Add(itemParaAñadir);
-                    }
-                }
+    // Si estamos dentro de los primeros 8, añadimos a Novedades
+    if (Novedades.Count < 8)
+    {
+        Novedades.Add(itemParaAñadir);
+    }
+}
                 
                 Debug.WriteLine($"✅ Listas actualizadas: {Novedades.Count} novedades.");
                 PararRefresco();
@@ -107,14 +123,7 @@ public partial class ProductosPage : ContentView
         });
     }
 
-    private ItemPop MapearAItemPop(ItemPop p)
-    {
-        if (!string.IsNullOrEmpty(p.ImagenUrl) && !p.ImagenUrl.StartsWith("http"))
-        {
-            p.ImagenUrl = $"http://10.0.2.2:5062{p.ImagenUrl}";
-        }
-        return p;
-    }
+    
 
     // 4. NAVEGACIÓN AL DETALLE
     private async void OnProductoSeleccionado(object sender, SelectionChangedEventArgs e)

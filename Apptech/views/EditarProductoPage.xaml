@@ -75,8 +75,8 @@
 
             <Label Text="Imagen del producto" FontAttributes="Bold" TextColor="Gray" />
             <Border StrokeShape="RoundRectangle 15" StrokeThickness="0" HeightRequest="200">
-                <Image Source="{Binding ImagenPreview}" Aspect="AspectFill" />
-            </Border>
+    <Image Source="{Binding ImagenUrl}" Aspect="AspectFill" />
+</Border>
 
             <Button Text="CAMBIAR FOTO" 
                     Command="{Binding CambiarImagenCommand}" 
